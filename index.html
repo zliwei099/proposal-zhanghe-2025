@@ -11,41 +11,39 @@
             box-sizing: border-box;
         }
         
+        :root {
+            --gold: #d4af37;
+            --gold-light: #f4d03f;
+            --dark: #0a0a0f;
+            --glass: rgba(255, 255, 255, 0.08);
+        }
+        
         html, body {
             height: 100%;
             overflow: hidden;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--dark);
         }
         
-        body {
-            background: #0a0a0a;
-            color: #fff;
-        }
-        
-        .slide {
+        /* 页面容器 */
+        .page {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             opacity: 0;
             visibility: hidden;
-            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 40px 24px;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
         }
         
-        .slide.active {
+        .page.active {
             opacity: 1;
             visibility: visible;
         }
         
-        /* 背景照片层 */
-        .slide::before {
-            content: '';
+        /* 背景图 - 更高清 */
+        .bg-image {
             position: absolute;
             top: 0;
             left: 0;
@@ -53,415 +51,542 @@
             height: 100%;
             background-size: cover;
             background-position: center;
-            opacity: 0.25;
-            filter: blur(2px) brightness(0.7);
-            transition: all 1.5s ease;
-            z-index: -1;
+            filter: brightness(0.75);
+            transform: scale(1.1);
+            transition: transform 8s ease-out, filter 0.5s ease;
         }
         
-        .slide.active::before {
-            opacity: 0.35;
-            transform: scale(1.05);
+        .page.active .bg-image {
+            transform: scale(1);
         }
         
-        #slide1::before {
-            background-image: url('photo-hiking.jpg');
-            background-color: #1a1a2e;
-        }
+        #p1 .bg-image { background-image: url('photo-hiking.jpg'); }
+        #p2 .bg-image { background-image: url('photo-concert.jpg'); }
+        #p3 .bg-image { background-image: url('photo-skiing.jpg'); }
         
-        #slide2::before {
-            background-image: url('photo-concert.jpg');
-            background-color: #16213e;
-        }
-        
-        #slide3::before {
-            background-image: url('photo-skiing.jpg');
-            background-color: #0f3460;
-        }
-        
-        /* 渐变遮罩 */
-        .slide::after {
-            content: '';
+        /* 渐变遮罩 - 从下往上 */
+        .overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: linear-gradient(
-                to bottom,
-                rgba(0,0,0,0.4) 0%,
-                rgba(0,0,0,0.1) 30%,
-                rgba(0,0,0,0.1) 70%,
-                rgba(0,0,0,0.6) 100%
+                to top,
+                rgba(10, 10, 15, 0.95) 0%,
+                rgba(10, 10, 15, 0.6) 40%,
+                rgba(10, 10, 15, 0.2) 70%,
+                rgba(10, 10, 15, 0.4) 100%
             );
-            z-index: -1;
         }
         
-        /* 内容动画 */
+        /* 内容区域 */
         .content {
-            text-align: center;
-            transform: translateY(30px);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 60px 32px 80px;
+            z-index: 10;
+        }
+        
+        /* 年份标签 */
+        .year-tag {
+            display: inline-block;
+            font-size: 12px;
+            letter-spacing: 4px;
+            color: var(--gold);
+            margin-bottom: 16px;
             opacity: 0;
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
+            transform: translateY(20px);
+            transition: all 0.6s ease 0.2s;
         }
         
-        .slide.active .content {
-            transform: translateY(0);
+        .page.active .year-tag {
             opacity: 1;
+            transform: translateY(0);
         }
         
-        .year {
-            font-size: 14px;
-            letter-spacing: 8px;
-            color: rgba(255,255,255,0.5);
-            margin-bottom: 20px;
-            font-weight: 300;
-        }
-        
+        /* 大标题 */
         .title {
-            font-size: 56px;
-            font-weight: 200;
-            margin-bottom: 24px;
-            letter-spacing: 16px;
-            text-indent: 16px;
-            background: linear-gradient(135deg, #fff 0%, #ffd700 50%, #fff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: shimmer 3s infinite;
+            font-size: 72px;
+            font-weight: 100;
+            letter-spacing: 24px;
+            color: #fff;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease 0.3s;
+            text-shadow: 0 4px 30px rgba(0,0,0,0.5);
         }
         
-        @keyframes shimmer {
-            0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.3); }
+        .page.active .title {
+            opacity: 1;
+            transform: translateY(0);
         }
         
-        .desc {
-            font-size: 18px;
-            line-height: 2;
-            color: rgba(255,255,255,0.85);
-            max-width: 300px;
+        /* 描述卡片 - 毛玻璃效果 */
+        .desc-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 24px 28px;
+            max-width: 340px;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s ease 0.5s;
         }
         
-        .desc .highlight {
-            color: #ffd700;
+        .page.active .desc-card {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .desc-text {
+            font-size: 16px;
+            line-height: 1.9;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .desc-text .highlight {
+            color: var(--gold-light);
             font-weight: 500;
         }
         
-        /* 进度指示器 */
-        .progress {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
+        /* 装饰线条 */
+        .divider-line {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--gold), transparent);
+            margin: 20px 0;
+            opacity: 0;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: all 0.6s ease 0.4s;
+        }
+        
+        .page.active .divider-line {
+            opacity: 1;
+            transform: scaleX(1);
+        }
+        
+        /* 页码指示 */
+        .page-indicator {
+            position: absolute;
+            top: 50%;
+            right: 24px;
+            transform: translateY(-50%);
             display: flex;
-            gap: 12px;
+            flex-direction: column;
+            gap: 16px;
             z-index: 100;
         }
         
-        .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.3);
+        .indicator {
+            width: 3px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
             transition: all 0.4s ease;
         }
         
-        .dot.active {
-            background: #ffd700;
-            width: 24px;
-            border-radius: 4px;
+        .indicator.active {
+            height: 40px;
+            background: var(--gold);
+            box-shadow: 0 0 10px var(--gold);
         }
         
         /* 提示文字 */
         .hint {
-            position: fixed;
-            bottom: 40px;
+            position: absolute;
+            bottom: 32px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 12px;
-            color: rgba(255,255,255,0.4);
-            letter-spacing: 2px;
-            animation: fadeInOut 2s infinite;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 3px;
+            z-index: 100;
+            animation: pulse 2s infinite;
         }
         
-        @keyframes fadeInOut {
+        @keyframes pulse {
             0%, 100% { opacity: 0.3; }
             50% { opacity: 0.7; }
         }
         
-        /* 求婚页特殊样式 */
+        /* ===== 求婚页特殊样式 ===== */
         #proposal {
-            background: radial-gradient(ellipse at center, #1a0a2e 0%, #000 100%);
-        }
-        
-        #proposal::before {
-            display: none;
+            background: radial-gradient(ellipse at center bottom, #1a0a2e 0%, #000 70%);
         }
         
         .proposal-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 24px;
             position: relative;
-            z-index: 10;
         }
         
-        .hearts-bg {
+        /* 星空背景 */
+        .stars {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
-            z-index: 1;
         }
         
-        .heart-float {
+        .star {
             position: absolute;
-            font-size: 24px;
-            animation: floatUp 6s infinite;
-            opacity: 0;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
         }
         
-        @keyframes floatUp {
-            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+        
+        /* 漂浮粒子 */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            font-size: 16px;
+            opacity: 0;
+            animation: floatParticle 6s infinite;
+        }
+        
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
             10% { opacity: 0.6; }
             90% { opacity: 0.6; }
-            100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
+            100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+        }
+        
+        /* 歌曲标题 */
+        .song-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 3px;
+            margin-bottom: 40px;
+            padding: 10px 20px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 50px;
+            opacity: 0;
+            transform: scale(0.9);
+            animation: fadeInScale 0.8s ease 0.2s forwards;
+        }
+        
+        @keyframes fadeInScale {
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .song-badge::before,
+        .song-badge::after {
+            content: '♪';
+            color: var(--gold);
+        }
+        
+        /* 戒指 */
+        .ring-wrapper {
+            position: relative;
+            margin-bottom: 50px;
         }
         
         .ring {
             font-size: 100px;
-            margin-bottom: 30px;
-            animation: heartbeat 1.5s infinite;
             display: inline-block;
+            animation: heartbeat 1.8s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.5));
         }
         
         @keyframes heartbeat {
             0%, 100% { transform: scale(1); }
-            14% { transform: scale(1.15); }
-            28% { transform: scale(1); }
-            42% { transform: scale(1.15); }
-            70% { transform: scale(1); }
+            15% { transform: scale(1.12); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.12); }
+            60% { transform: scale(1); }
         }
         
-        .song-title {
-            font-size: 14px;
-            color: rgba(255,255,255,0.5);
-            letter-spacing: 6px;
-            margin-bottom: 20px;
+        /* 光晕效果 */
+        .glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.3) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            animation: pulseGlow 2s ease-in-out infinite;
         }
         
+        @keyframes pulseGlow {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+        }
+        
+        /* 求婚文字 */
         .proposal-text {
-            font-size: 32px;
-            font-weight: 700;
-            line-height: 1.8;
-            margin-bottom: 40px;
-            text-shadow: 0 0 40px rgba(255,215,0,0.3);
+            font-size: 28px;
+            font-weight: 300;
+            line-height: 2.2;
+            color: #fff;
+            margin-bottom: 50px;
         }
         
         .proposal-text .line {
             display: block;
             opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 0.8s forwards;
+            transform: translateY(30px);
         }
         
-        .proposal-text .line:nth-child(1) { animation-delay: 0.2s; }
-        .proposal-text .line:nth-child(2) { animation-delay: 0.6s; }
-        .proposal-text .line:nth-child(3) { animation-delay: 1s; }
-        .proposal-text .line:nth-child(4) { animation-delay: 1.4s; }
+        .proposal-text .line:nth-child(1) { animation: fadeUp 0.8s ease 0.6s forwards; }
+        .proposal-text .line:nth-child(2) { animation: fadeUp 0.8s ease 1s forwards; }
+        .proposal-text .line:nth-child(3) { animation: fadeUp 0.8s ease 1.4s forwards; }
+        .proposal-text .line:nth-child(4) { animation: fadeUp 0.8s ease 1.8s forwards; }
         
-        @keyframes fadeInUp {
+        @keyframes fadeUp {
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
         
+        .proposal-text .highlight {
+            font-size: 36px;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* 名字 */
         .names {
-            font-size: 20px;
-            color: #ffd700;
+            font-size: 22px;
+            color: var(--gold);
             letter-spacing: 8px;
             font-weight: 300;
+            opacity: 0;
+            animation: fadeIn 1s ease 2.5s forwards;
         }
         
-        .names span {
-            margin: 0 12px;
+        .names .heart {
+            margin: 0 16px;
+            color: #e74c3c;
+            animation: heartbeat 1.5s ease-in-out infinite;
         }
         
-        /* 闪光效果 */
-        .sparkle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: #ffd700;
-            border-radius: 50%;
-            animation: sparkle 2s infinite;
+        @keyframes fadeIn {
+            to { opacity: 1; }
         }
         
-        @keyframes sparkle {
-            0%, 100% { opacity: 0; transform: scale(0); }
-            50% { opacity: 1; transform: scale(1); }
+        /* 响应式 */
+        @media (max-height: 700px) {
+            .title { font-size: 56px; }
+            .ring { font-size: 80px; }
+            .proposal-text { font-size: 24px; }
+            .proposal-text .highlight { font-size: 30px; }
         }
     </style>
 </head>
 <body>
-    <!-- 回忆幻灯片 1: 爬山 -->
-    <div class="slide active" id="slide1">
+    <!-- 第1页：山 -->
+    <div class="page active" id="p1">
+        <div class="bg-image"></div>
+        <div class="overlay"></div>
         <div class="content">
-            <div class="year">2022</div>
-            <div class="title">山</div>
-            <div class="desc">
-                我们在爬山时相识<br>
-                <span class="highlight">张立伟 · 和晨睿</span>
+            <div class="year-tag">2022</div>
+            <h1 class="title">山</h1>
+            <div class="divider-line"></div>
+            <div class="desc-card">
+                <p class="desc-text">
+                    我们在<span class="highlight">爬山</span>时相识<br>
+                    <span class="highlight">张立伟</span> 与 <span class="highlight">和晨睿</span><br>
+                    两年，一起爬过很多座山
+                </p>
             </div>
         </div>
     </div>
-    
-    <!-- 回忆幻灯片 2: 演唱会 -->
-    <div class="slide" id="slide2">
+
+    <!-- 第2页：星 -->
+    <div class="page" id="p2">
+        <div class="bg-image"></div>
+        <div class="overlay"></div>
         <div class="content">
-            <div class="year">第一次</div>
-            <div class="title">星</div>
-            <div class="desc">
-                你带我看第一场<span class="highlight">张杰</span><br>
-                我的第一次演唱会
+            <div class="year-tag">第一次演唱会</div>
+            <h1 class="title">星</h1>
+            <div class="divider-line"></div>
+            <div class="desc-card">
+                <p class="desc-text">
+                    你带我看第一场<span class="highlight">张杰</span><br>
+                    我的第一次演唱会<br>
+                    从此，音乐成为我们的一部分
+                </p>
             </div>
         </div>
     </div>
-    
-    <!-- 回忆幻灯片 3: 滑雪 -->
-    <div class="slide" id="slide3">
+
+    <!-- 第3页：雪 -->
+    <div class="page" id="p3">
+        <div class="bg-image"></div>
+        <div class="overlay"></div>
         <div class="content">
-            <div class="year">每一周</div>
-            <div class="title">雪</div>
-            <div class="desc">
-                你怕滑雪，却每周陪我去<br>
-                最后，你也学会了
+            <div class="year-tag">每一周</div>
+            <h1 class="title">雪</h1>
+            <div class="divider-line"></div>
+            <div class="desc-card">
+                <p class="desc-text">
+                    你怕<span class="highlight">滑雪</span>，却每周陪我去<br>
+                    从害怕到学会<br>
+                    这就是陪伴的力量
+                </p>
             </div>
         </div>
     </div>
-    
-    <!-- 求婚页 -->
-    <div class="slide" id="proposal">
-        <div class="hearts-bg" id="heartsContainer"></div>
+
+    <!-- 第4页：求婚 -->
+    <div class="page" id="proposal">
+        <div class="stars" id="stars"></div>
+        <div class="particles" id="particles"></div>
+        
         <div class="proposal-content">
-            <div class="song-title">♪ 《这就是爱》 ♪</div>
-            <div class="ring">💍</div>
+            <div class="song-badge">这就是爱</div>
+            
+            <div class="ring-wrapper">
+                <div class="glow"></div>
+                <div class="ring">💍</div>
+            </div>
+            
             <div class="proposal-text">
                 <span class="line">山爬过了</span>
                 <span class="line">雪滑过了</span>
                 <span class="line">歌也听过了</span>
-                <span class="line">但我不想停</span>
+                <span class="line highlight">但我不想停</span>
             </div>
+            
             <div class="names">
-                <span>和晨睿</span>
-                ♡
-                <span>嫁给我</span>
+                和晨睿 <span class="heart">♥</span> 嫁给我
             </div>
         </div>
     </div>
-    
-    <!-- 进度点 -->
-    <div class="progress">
-        <div class="dot active" data-slide="0"></div>
-        <div class="dot" data-slide="1"></div>
-        <div class="dot" data-slide="2"></div>
-        <div class="dot" data-slide="3"></div>
+
+    <!-- 页码指示器 -->
+    <div class="page-indicator">
+        <div class="indicator active" data-page="0"></div>
+        <div class="indicator" data-page="1"></div>
+        <div class="indicator" data-page="2"></div>
+        <div class="indicator" data-page="3"></div>
     </div>
-    
-    <div class="hint">点击或滑动继续</div>
+
+    <div class="hint">点击继续</div>
 
     <script>
-        const slides = document.querySelectorAll('.slide');
-        const dots = document.querySelectorAll('.dot');
+        const pages = document.querySelectorAll('.page');
+        const indicators = document.querySelectorAll('.indicator');
         const hint = document.querySelector('.hint');
-        let currentSlide = 0;
-        let autoPlayTimer = null;
-        
-        // 生成飘落的心
-        function createHearts() {
-            const container = document.getElementById('heartsContainer');
-            const hearts = ['💙', '🤍', '✨', '💫'];
+        let currentPage = 0;
+        let autoTimer = null;
+
+        // 生成星星
+        function createStars() {
+            const container = document.getElementById('stars');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 60 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                container.appendChild(star);
+            }
+        }
+
+        // 生成漂浮粒子
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particles = ['✨', '💫', '⭐', '🌟'];
             
             setInterval(() => {
-                if (currentSlide !== 3) return;
+                if (currentPage !== 3) return;
                 
-                const heart = document.createElement('span');
-                heart.className = 'heart-float';
-                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-                heart.style.left = Math.random() * 100 + '%';
-                heart.style.animationDuration = (4 + Math.random() * 4) + 's';
-                heart.style.animationDelay = Math.random() * 2 + 's';
-                container.appendChild(heart);
+                const p = document.createElement('span');
+                p.className = 'particle';
+                p.textContent = particles[Math.floor(Math.random() * particles.length)];
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (5 + Math.random() * 4) + 's';
+                container.appendChild(p);
                 
-                setTimeout(() => heart.remove(), 8000);
-            }, 300);
+                setTimeout(() => p.remove(), 9000);
+            }, 400);
         }
-        
-        // 切换幻灯片
-        function goToSlide(index) {
-            if (index < 0 || index >= slides.length) return;
+
+        // 切换页面
+        function goToPage(index) {
+            if (index < 0 || index >= pages.length) return;
             
-            slides.forEach((slide, i) => {
-                slide.classList.toggle('active', i === index);
+            pages.forEach((page, i) => {
+                page.classList.toggle('active', i === index);
             });
             
-            dots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === index);
+            indicators.forEach((ind, i) => {
+                ind.classList.toggle('active', i === index);
             });
             
-            currentSlide = index;
-            
-            // 最后一页隐藏提示
-            if (index === 3) {
-                hint.style.display = 'none';
-            } else {
-                hint.style.display = 'block';
-            }
+            currentPage = index;
+            hint.style.display = index === 3 ? 'none' : 'block';
             
             // 重置自动播放
-            clearTimeout(autoPlayTimer);
+            clearTimeout(autoTimer);
             if (index < 3) {
-                autoPlayTimer = setTimeout(() => {
-                    goToSlide(index + 1);
-                }, 4000);
+                autoTimer = setTimeout(() => goToPage(index + 1), 5000);
             }
         }
-        
+
         // 点击切换
         document.addEventListener('click', () => {
-            if (currentSlide < 3) {
-                goToSlide(currentSlide + 1);
-            }
+            if (currentPage < 3) goToPage(currentPage + 1);
         });
-        
+
         // 滑动切换
-        let touchStartX = 0;
-        let touchEndX = 0;
-        
-        document.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
+        let touchStartY = 0;
+        document.addEventListener('touchstart', e => {
+            touchStartY = e.changedTouches[0].screenY;
         }, {passive: true});
-        
-        document.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        }, {passive: true});
-        
-        function handleSwipe() {
-            const diff = touchStartX - touchEndX;
+
+        document.addEventListener('touchend', e => {
+            const diff = touchStartY - e.changedTouches[0].screenY;
             if (Math.abs(diff) > 50) {
-                if (diff > 0 && currentSlide < 3) {
-                    goToSlide(currentSlide + 1);
-                } else if (diff < 0 && currentSlide > 0) {
-                    goToSlide(currentSlide - 1);
-                }
+                if (diff > 0 && currentPage < 3) goToPage(currentPage + 1);
+                else if (diff < 0 && currentPage > 0) goToPage(currentPage - 1);
             }
-        }
-        
+        }, {passive: true});
+
         // 初始化
-        createHearts();
-        autoPlayTimer = setTimeout(() => goToSlide(1), 4000);
+        createStars();
+        createParticles();
+        autoTimer = setTimeout(() => goToPage(1), 5000);
     </script>
 </body>
 </html>
