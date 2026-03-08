@@ -42,7 +42,7 @@
             visibility: visible;
         }
         
-        /* 背景图 - 更高清 */
+        /* 背景图 */
         .bg-image {
             position: absolute;
             top: 0;
@@ -53,7 +53,7 @@
             background-position: center;
             filter: brightness(0.75);
             transform: scale(1.1);
-            transition: transform 8s ease-out, filter 0.5s ease;
+            transition: transform 8s ease-out;
         }
         
         .page.active .bg-image {
@@ -64,7 +64,7 @@
         #p2 .bg-image { background-image: url('photo-concert.jpg'); }
         #p3 .bg-image { background-image: url('photo-skiing.jpg'); }
         
-        /* 渐变遮罩 - 从下往上 */
+        /* 渐变遮罩 */
         .overlay {
             position: absolute;
             top: 0;
@@ -125,7 +125,7 @@
             transform: translateY(0);
         }
         
-        /* 描述卡片 - 毛玻璃效果 */
+        /* 描述卡片 */
         .desc-card {
             background: var(--glass);
             backdrop-filter: blur(20px) saturate(180%);
@@ -172,7 +172,7 @@
             transform: scaleX(1);
         }
         
-        /* 页码指示 */
+        /* 页码指示器 */
         .page-indicator {
             position: absolute;
             top: 50%;
@@ -216,7 +216,137 @@
             50% { opacity: 0.7; }
         }
         
-        /* ===== 求婚页特殊样式 ===== */
+        /* ===== 封面页 ===== */
+        #cover {
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #000 70%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 24px;
+        }
+        
+        .cover-stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .cover-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+        
+        .cover-content {
+            position: relative;
+            z-index: 10;
+        }
+        
+        .cover-year {
+            font-size: 14px;
+            letter-spacing: 8px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: fadeIn 1s ease 0.3s forwards;
+        }
+        
+        .cover-names {
+            font-size: 28px;
+            font-weight: 300;
+            letter-spacing: 4px;
+            color: #fff;
+            margin-bottom: 16px;
+            opacity: 0;
+            animation: fadeIn 1s ease 0.6s forwards;
+        }
+        
+        .cover-names span {
+            color: var(--gold);
+        }
+        
+        .cover-line {
+            width: 80px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 0 auto 40px;
+            opacity: 0;
+            animation: fadeIn 1s ease 0.9s forwards;
+        }
+        
+        .cover-title {
+            font-size: 48px;
+            font-weight: 100;
+            letter-spacing: 12px;
+            color: #fff;
+            margin-bottom: 60px;
+            opacity: 0;
+            animation: fadeInUp 1s ease 1.2s forwards;
+        }
+        
+        .cover-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 48px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            border: none;
+            border-radius: 50px;
+            color: #000;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            cursor: pointer;
+            opacity: 0;
+            transform: scale(0.9);
+            animation: fadeInScale 0.8s ease 1.8s forwards;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .cover-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.4);
+        }
+        
+        .cover-btn svg {
+            width: 20px;
+            height: 20px;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(5px); }
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        /* ===== 求婚页 ===== */
         #proposal {
             background: radial-gradient(ellipse at center bottom, #1a0a2e 0%, #000 70%);
         }
@@ -232,7 +362,6 @@
             position: relative;
         }
         
-        /* 星空背景 */
         .stars {
             position: absolute;
             top: 0;
@@ -251,12 +380,6 @@
             animation: twinkle 3s infinite;
         }
         
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 1; }
-        }
-        
-        /* 漂浮粒子 */
         .particles {
             position: absolute;
             top: 0;
@@ -281,7 +404,6 @@
             100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
         }
         
-        /* 歌曲标题 */
         .song-badge {
             display: inline-flex;
             align-items: center;
@@ -299,17 +421,11 @@
             animation: fadeInScale 0.8s ease 0.2s forwards;
         }
         
-        @keyframes fadeInScale {
-            to { opacity: 1; transform: scale(1); }
-        }
-        
-        .song-badge::before,
-        .song-badge::after {
+        .song-badge::before, .song-badge::after {
             content: '♪';
             color: var(--gold);
         }
         
-        /* 戒指 */
         .ring-wrapper {
             position: relative;
             margin-bottom: 50px;
@@ -330,7 +446,6 @@
             60% { transform: scale(1); }
         }
         
-        /* 光晕效果 */
         .glow {
             position: absolute;
             top: 50%;
@@ -347,7 +462,6 @@
             50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
         }
         
-        /* 求婚文字 */
         .proposal-text {
             font-size: 28px;
             font-weight: 300;
@@ -368,10 +482,7 @@
         .proposal-text .line:nth-child(4) { animation: fadeUp 0.8s ease 1.8s forwards; }
         
         @keyframes fadeUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .proposal-text .highlight {
@@ -383,38 +494,245 @@
             background-clip: text;
         }
         
-        /* 名字 */
-        .names {
-            font-size: 22px;
-            color: var(--gold);
-            letter-spacing: 8px;
+        /* ===== 求婚按钮页 ===== */
+        #question {
+            background: radial-gradient(ellipse at center, #1a0a2e 0%, #000 70%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 24px;
+        }
+        
+        .question-content {
+            position: relative;
+            z-index: 10;
+        }
+        
+        .question-ring {
+            font-size: 80px;
+            margin-bottom: 30px;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 40px rgba(212, 175, 55, 0.6));
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .question-text {
+            font-size: 32px;
             font-weight: 300;
+            color: #fff;
+            margin-bottom: 60px;
+            line-height: 1.6;
             opacity: 0;
-            animation: fadeIn 1s ease 2.5s forwards;
+            animation: fadeIn 1s ease 0.3s forwards;
         }
         
-        .names .heart {
-            margin: 0 16px;
+        .question-text .name {
+            color: var(--gold);
+            font-weight: 500;
+        }
+        
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.6s forwards;
+        }
+        
+        .btn-yes {
+            padding: 20px 60px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            border: none;
+            border-radius: 50px;
+            color: #000;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+        }
+        
+        .btn-yes:hover {
+            transform: scale(1.08);
+            box-shadow: 0 15px 50px rgba(212, 175, 55, 0.5);
+        }
+        
+        .btn-no {
+            padding: 12px 40px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 30px;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-no:hover {
+            border-color: #e74c3c;
             color: #e74c3c;
-            animation: heartbeat 1.5s ease-in-out infinite;
         }
         
-        @keyframes fadeIn {
-            to { opacity: 1; }
+        /* ===== 庆祝页 ===== */
+        #celebration {
+            background: radial-gradient(ellipse at center, #2d1b4e 0%, #000 70%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 24px;
+            overflow: hidden;
         }
         
-        /* 响应式 */
+        .celebration-content {
+            position: relative;
+            z-index: 10;
+        }
+        
+        .big-heart {
+            font-size: 120px;
+            margin-bottom: 30px;
+            animation: heartbeat 1s ease-in-out infinite;
+            filter: drop-shadow(0 0 50px rgba(231, 76, 60, 0.6));
+        }
+        
+        .celebration-title {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeInScale 0.8s ease 0.3s forwards;
+        }
+        
+        .celebration-subtitle {
+            font-size: 20px;
+            color: rgba(255,255,255,0.8);
+            letter-spacing: 4px;
+            opacity: 0;
+            animation: fadeIn 1s ease 0.8s forwards;
+        }
+        
+        .celebration-names {
+            margin-top: 40px;
+            font-size: 24px;
+            color: var(--gold);
+            letter-spacing: 6px;
+            opacity: 0;
+            animation: fadeIn 1s ease 1.2s forwards;
+        }
+        
+        /* 彩带特效 */
+        .confetti-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            animation: confetti-fall 4s ease-out forwards;
+        }
+        
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        /* 烟花特效 */
+        .firework {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            animation: firework-explode 1.5s ease-out forwards;
+        }
+        
+        @keyframes firework-explode {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+        
+        /* 爱心雨 */
+        .heart-rain {
+            position: absolute;
+            font-size: 24px;
+            animation: heart-fall 3s ease-out forwards;
+            opacity: 0.8;
+        }
+        
+        @keyframes heart-fall {
+            0% {
+                transform: translateY(-50px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
         @media (max-height: 700px) {
             .title { font-size: 56px; }
             .ring { font-size: 80px; }
             .proposal-text { font-size: 24px; }
             .proposal-text .highlight { font-size: 30px; }
+            .question-text { font-size: 28px; }
+            .celebration-title { font-size: 40px; }
         }
     </style>
 </head>
 <body>
+    <!-- 封面页 -->
+    <div class="page active" id="cover">
+        <div class="cover-stars" id="coverStars"></div>
+        <div class="cover-content">
+            <div class="cover-year">2022 — 2025</div>
+            <div class="cover-names"><span>张立伟</span> · <span>和晨睿</span></div>
+            <div class="cover-line"></div>
+            <div class="cover-title">我们的故事</div>
+            
+            <button class="cover-btn" onclick="startStory()">
+                开始
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12l7 7 7-7"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
     <!-- 第1页：山 -->
-    <div class="page active" id="p1">
+    <div class="page" id="p1">
         <div class="bg-image"></div>
         <div class="overlay"></div>
         <div class="content">
@@ -486,41 +804,92 @@
                 <span class="line">歌也听过了</span>
                 <span class="line highlight">但我不想停</span>
             </div>
+        </div>
+    </div>
+
+    <!-- 第5页：提问 -->
+    <div class="page" id="question">
+        <div class="stars" id="questionStars"></div>
+        
+        <div class="question-content">
+            <div class="question-ring">💍</div>
             
-            <div class="names">
-                和晨睿 <span class="heart">♥</span> 嫁给我
+            <div class="question-text">
+                <span class="name">和晨睿</span><br>
+                你愿意嫁给我吗？
+            </div>
+            
+            <div class="buttons">
+                <button class="btn-yes" onclick="sayYes()">我愿意 ♥</button>
+                <button class="btn-no" onclick="sayNo()">再考虑一下</button>
             </div>
         </div>
     </div>
 
+    <!-- 第6页：庆祝 -->
+    <div class="page" id="celebration">
+        <div class="confetti-container" id="confetti"></div>
+        
+        <div class="celebration-content">
+            <div class="big-heart">❤️</div>
+            
+            <div class="celebration-title">她答应了！</div>
+            
+            <div class="celebration-subtitle">恭喜你们，开启人生新篇章</div>
+            
+            <div class="celebration-names">张立伟 ♥ 和晨睿</div>
+        </div>
+    </div>
+
     <!-- 页码指示器 -->
-    <div class="page-indicator">
+    <div class="page-indicator" id="indicator">
         <div class="indicator active" data-page="0"></div>
         <div class="indicator" data-page="1"></div>
         <div class="indicator" data-page="2"></div>
         <div class="indicator" data-page="3"></div>
+        <div class="indicator" data-page="4"></div>
+        <div class="indicator" data-page="5"></div>
     </div>
 
-    <div class="hint">点击继续</div>
+    <div class="hint" id="hint">点击继续</div>
 
     <script>
         const pages = document.querySelectorAll('.page');
         const indicators = document.querySelectorAll('.indicator');
-        const hint = document.querySelector('.hint');
+        const hint = document.getElementById('hint');
+        const indicatorContainer = document.getElementById('indicator');
         let currentPage = 0;
         let autoTimer = null;
+        let storyStarted = false;
+
+        // 生成封面星星
+        function createCoverStars() {
+            const container = document.getElementById('coverStars');
+            for (let i = 0; i < 80; i++) {
+                const star = document.createElement('div');
+                star.className = 'cover-star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(star);
+            }
+        }
 
         // 生成星星
         function createStars() {
-            const container = document.getElementById('stars');
-            for (let i = 0; i < 50; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 60 + '%';
-                star.style.animationDelay = Math.random() * 3 + 's';
-                container.appendChild(star);
-            }
+            const containers = ['stars', 'questionStars'];
+            containers.forEach(id => {
+                const container = document.getElementById(id);
+                if (!container) return;
+                for (let i = 0; i < 50; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star';
+                    star.style.left = Math.random() * 100 + '%';
+                    star.style.top = Math.random() * 60 + '%';
+                    star.style.animationDelay = Math.random() * 3 + 's';
+                    container.appendChild(star);
+                }
+            });
         }
 
         // 生成漂浮粒子
@@ -529,7 +898,7 @@
             const particles = ['✨', '💫', '⭐', '🌟'];
             
             setInterval(() => {
-                if (currentPage !== 3) return;
+                if (currentPage !== 4) return;
                 
                 const p = document.createElement('span');
                 p.className = 'particle';
@@ -540,6 +909,13 @@
                 
                 setTimeout(() => p.remove(), 9000);
             }, 400);
+        }
+
+        // 开始故事
+        function startStory() {
+            storyStarted = true;
+            indicatorContainer.style.opacity = '1';
+            goToPage(1);
         }
 
         // 切换页面
@@ -555,18 +931,37 @@
             });
             
             currentPage = index;
-            hint.style.display = index === 3 ? 'none' : 'block';
             
-            // 重置自动播放
+            // 更新提示
+            if (index === 0) {
+                hint.style.display = 'none';
+                indicatorContainer.style.opacity = '0';
+            } else if (index === 5) {
+                hint.style.display = 'none';
+                indicatorContainer.style.opacity = '0';
+            } else if (index === 4) {
+                hint.style.display = 'none';
+            } else {
+                hint.style.display = 'block';
+                indicatorContainer.style.opacity = '1';
+            }
+            
+            // 自动播放
             clearTimeout(autoTimer);
-            if (index < 3) {
+            if (index >= 1 && index < 4) {
                 autoTimer = setTimeout(() => goToPage(index + 1), 5000);
+            }
+            
+            // 触发庆祝特效
+            if (index === 5) {
+                startCelebration();
             }
         }
 
         // 点击切换
-        document.addEventListener('click', () => {
-            if (currentPage < 3) goToPage(currentPage + 1);
+        document.addEventListener('click', (e) => {
+            if (!storyStarted || currentPage === 4 || currentPage === 5) return;
+            if (currentPage < 4) goToPage(currentPage + 1);
         });
 
         // 滑动切换
@@ -576,17 +971,101 @@
         }, {passive: true});
 
         document.addEventListener('touchend', e => {
+            if (!storyStarted || currentPage === 4 || currentPage === 5) return;
             const diff = touchStartY - e.changedTouches[0].screenY;
             if (Math.abs(diff) > 50) {
-                if (diff > 0 && currentPage < 3) goToPage(currentPage + 1);
-                else if (diff < 0 && currentPage > 0) goToPage(currentPage - 1);
+                if (diff > 0 && currentPage < 4) goToPage(currentPage + 1);
+                else if (diff < 0 && currentPage > 1) goToPage(currentPage - 1);
             }
         }, {passive: true});
 
+        // 愿意！
+        function sayYes() {
+            goToPage(5);
+        }
+
+        // 再考虑一下
+        function sayNo() {
+            const btn = document.querySelector('.btn-no');
+            btn.textContent = '只能选愿意哦 😊';
+            btn.style.borderColor = '#d4af37';
+            btn.style.color = '#d4af37';
+            setTimeout(() => {
+                btn.textContent = '再考虑一下';
+                btn.style.borderColor = 'rgba(255,255,255,0.3)';
+                btn.style.color = 'rgba(255,255,255,0.6)';
+            }, 2000);
+        }
+
+        // 庆祝特效
+        function startCelebration() {
+            const container = document.getElementById('confetti');
+            const colors = ['#d4af37', '#f4d03f', '#e74c3c', '#3498db', '#fff', '#ff6b9d'];
+            
+            // 彩带
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    container.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 4500);
+                }, i * 30);
+            }
+            
+            // 爱心雨
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart-rain';
+                    heart.textContent = ['❤️', '💖', '💕', '💗', '💝'][Math.floor(Math.random() * 5)];
+                    heart.style.left = Math.random() * 100 + '%';
+                    heart.style.animationDelay = Math.random() * 0.5 + 's';
+                    container.appendChild(heart);
+                    
+                    setTimeout(() => heart.remove(), 3500);
+                }, i * 100 + 500);
+            }
+            
+            // 烟花
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => createFirework(), i * 300 + 800);
+            }
+        }
+
+        // 烟花
+        function createFirework() {
+            const container = document.getElementById('confetti');
+            const x = 20 + Math.random() * 60;
+            const y = 20 + Math.random() * 40;
+            const colors = ['#d4af37', '#ff6b9d', '#3498db', '#e74c3c'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'firework';
+                particle.style.left = x + '%';
+                particle.style.top = y + '%';
+                particle.style.background = color;
+                const angle = (i / 20) * Math.PI * 2;
+                const distance = 100 + Math.random() * 100;
+                particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+                particle.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+                container.appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 1500);
+            }
+        }
+
         // 初始化
+        createCoverStars();
         createStars();
         createParticles();
-        autoTimer = setTimeout(() => goToPage(1), 5000);
+        indicatorContainer.style.opacity = '0';
     </script>
 </body>
 </html>
