@@ -850,6 +850,7 @@
         <div class="indicator" data-page="3"></div>
         <div class="indicator" data-page="4"></div>
         <div class="indicator" data-page="5"></div>
+        <div class="indicator" data-page="6"></div>
     </div>
 
     <div class="hint" id="hint">点击继续</div>
@@ -934,34 +935,35 @@
             currentPage = index;
             
             // 更新提示
-            if (index === 0) {
-                hint.style.display = 'none';
-                indicatorContainer.style.opacity = '0';
-            } else if (index === 5) {
-                hint.style.display = 'none';
-                indicatorContainer.style.opacity = '0';
-            } else if (index === 4) {
+            if (index === 0 || index === 4 || index === 5 || index === 6) {
                 hint.style.display = 'none';
             } else {
                 hint.style.display = 'block';
+            }
+            
+            if (index === 0 || index === 6) {
+                indicatorContainer.style.opacity = '0';
+            } else {
                 indicatorContainer.style.opacity = '1';
             }
             
             // 自动播放
             clearTimeout(autoTimer);
-            if (index >= 1 && index < 4) {
+            if (index >= 1 && index <= 3) { // 山、星、雪三页自动播放
                 autoTimer = setTimeout(() => goToPage(index + 1), 5000);
             }
             
             // 触发庆祝特效
-            if (index === 5) {
+            if (index === 6) {
                 startCelebration();
             }
         }
 
-        // 点击切换
+        // 点击切换（排除按钮和链接）
         document.addEventListener('click', (e) => {
-            if (!storyStarted || currentPage === 4 || currentPage === 5) return;
+            if (!storyStarted) return;
+            if (currentPage === 4 || currentPage === 5 || currentPage === 6) return; // 求婚页、提问页、庆祝页不自动切换
+            if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return; // 排除按钮点击
             if (currentPage < 4) goToPage(currentPage + 1);
         });
 
@@ -972,7 +974,7 @@
         }, {passive: true});
 
         document.addEventListener('touchend', e => {
-            if (!storyStarted || currentPage === 4 || currentPage === 5) return;
+            if (!storyStarted || currentPage === 4 || currentPage === 5 || currentPage === 6) return;
             const diff = touchStartY - e.changedTouches[0].screenY;
             if (Math.abs(diff) > 50) {
                 if (diff > 0 && currentPage < 4) goToPage(currentPage + 1);
