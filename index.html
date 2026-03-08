@@ -494,6 +494,28 @@
             background-clip: text;
         }
         
+        .continue-btn {
+            margin-top: 40px;
+            padding: 16px 48px;
+            background: transparent;
+            border: 2px solid var(--gold);
+            border-radius: 50px;
+            color: var(--gold);
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeIn 1s ease 2.5s forwards;
+        }
+        
+        .continue-btn:hover {
+            background: var(--gold);
+            color: #000;
+            transform: scale(1.05);
+        }
+        
         /* ===== 求婚按钮页 ===== */
         #question {
             background: radial-gradient(ellipse at center, #1a0a2e 0%, #000 70%);
@@ -805,6 +827,8 @@
                 <span class="line">歌也听过了</span>
                 <span class="line highlight">但我不想停</span>
             </div>
+            
+            <button class="continue-btn" onclick="goToPage(5)">继续 →</button>
         </div>
     </div>
 
