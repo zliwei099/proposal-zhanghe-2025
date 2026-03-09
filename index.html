@@ -514,10 +514,11 @@
             transition: all 0.8s ease;
         }
         
-        .page.active .stat-item:nth-child(1) { transition-delay: 0.3s; }
-        .page.active .stat-item:nth-child(2) { transition-delay: 0.5s; }
-        .page.active .stat-item:nth-child(3) { transition-delay: 0.7s; }
-        .page.active .stat-item:nth-child(4) { transition-delay: 0.9s; }
+        .page.active .stat-item:nth-child(1) { transition-delay: 0.2s; }
+        .page.active .stat-item:nth-child(2) { transition-delay: 0.35s; }
+        .page.active .stat-item:nth-child(3) { transition-delay: 0.5s; }
+        .page.active .stat-item:nth-child(4) { transition-delay: 0.65s; }
+        .page.active .stat-item:nth-child(5) { transition-delay: 0.8s; }
         
         .page.active .stat-item {
             opacity: 1;
@@ -957,7 +958,7 @@
         <div class="main-content">
             <div class="time-label">
                 <div class="time-dot"></div>
-                <div class="time-text">2024年 · 春</div>
+                <div class="time-text">2024年4月13日</div>
             </div>
             
             <h1 class="main-title">
@@ -1057,7 +1058,13 @@
                 <div class="stat-item">
                     <div class="stat-value" id="daysNum">0</div>
                     <div class="stat-unit">天</div>
-                    <div class="stat-desc">相识至今</div>
+                    <div class="stat-desc">2024.4.13 相识</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-value" id="loveDays">0</div>
+                    <div class="stat-unit">天</div>
+                    <div class="stat-desc">2024.6.10 在一起</div>
                 </div>
                 
                 <div class="stat-item">
@@ -1072,10 +1079,10 @@
                     <div class="stat-desc">张杰演唱会</div>
                 </div>
                 
-                <div class="stat-item">
+                <div class="stat-item" style="grid-column: span 2;">
                     <div class="stat-value">∞</div>
                     <div class="stat-unit"></div>
-                    <div class="stat-desc">未来时光</div>
+                    <div class="stat-desc">未来，一起走</div>
                 </div>
             </div>
         </div>
@@ -1165,21 +1172,37 @@
 
         // 计算天数
         function calcDays() {
-            const start = new Date('2024-03-01'); // 可以修改成真实相识日期
+            const meetDate = new Date('2024-04-13'); // 相识日期
+            const loveDate = new Date('2024-06-10'); // 在一起日期
             const now = new Date();
-            const days = Math.floor((now - start) / (1000 * 60 * 60 * 24));
             
-            // 数字滚动
+            const meetDays = Math.floor((now - meetDate) / (1000 * 60 * 60 * 24));
+            
+            // 数字滚动 - 相识天数
             const el = document.getElementById('daysNum');
             let n = 0;
-            const step = Math.ceil(days / 40);
+            const step = Math.ceil(meetDays / 40);
             const timer = setInterval(() => {
                 n += step;
-                if (n >= days) {
-                    n = days;
+                if (n >= meetDays) {
+                    n = meetDays;
                     clearInterval(timer);
                 }
                 el.textContent = n;
+            }, 25);
+            
+            // 在一起天数
+            const loveDays = Math.floor((now - loveDate) / (1000 * 60 * 60 * 24));
+            const loveEl = document.getElementById('loveDays');
+            let ln = 0;
+            const lstep = Math.ceil(loveDays / 40);
+            const ltimer = setInterval(() => {
+                ln += lstep;
+                if (ln >= loveDays) {
+                    ln = loveDays;
+                    clearInterval(ltimer);
+                }
+                loveEl.textContent = ln;
             }, 25);
         }
 
