@@ -1292,7 +1292,7 @@
             }
             
             // 自动播放
-            if (idx >= 1 && idx <= 3) {
+            if (idx >= 1 && idx <= 4) {
                 clearTimeout(window.autoTimer);
                 window.autoTimer = setTimeout(() => goToPage(idx + 1), 6000);
             }
@@ -1310,8 +1310,8 @@
             if (!storyStarted) return;
             // 如果是按钮点击，不要拦截
             if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
-            // 只在照片页自动切换
-            if (currentIdx >= 1 && currentIdx <= 3) {
+            // 在照片页和统计页支持点击切换
+            if (currentIdx >= 1 && currentIdx <= 4) {
                 goToPage(currentIdx + 1);
             }
         });
@@ -1322,11 +1322,11 @@
         
         document.addEventListener('touchend', e => {
             if (!storyStarted) return;
-            // 只在照片页支持滑动切换
-            if (currentIdx < 1 || currentIdx > 3) return;
+            // 在照片页和统计页支持滑动切换
+            if (currentIdx < 1 || currentIdx > 4) return;
             const diff = tsY - e.changedTouches[0].clientY;
             if (Math.abs(diff) > 60) {
-                if (diff > 0 && currentIdx < 3) goToPage(currentIdx + 1);
+                if (diff > 0 && currentIdx < 4) goToPage(currentIdx + 1);
                 else if (diff < 0 && currentIdx > 1) goToPage(currentIdx - 1);
             }
         }, {passive: true});
