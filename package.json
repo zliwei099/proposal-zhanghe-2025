@@ -1,0 +1,23 @@
+{
+  "name": "proposal-zhanghe-2025",
+  "version": "1.0.0",
+  "description": "> 在张杰《这就是爱》演唱会上的求婚惊喜",
+  "main": "e2e-test.spec.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zliwei099/proposal-zhanghe-2025.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zliwei099/proposal-zhanghe-2025/issues"
+  },
+  "homepage": "https://github.com/zliwei099/proposal-zhanghe-2025#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
+  }
+}
