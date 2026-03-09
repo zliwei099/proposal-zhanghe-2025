@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>这就是爱</title>
+    <title>这就是爱 ❤️</title>
     <style>
         * {
             margin: 0;
@@ -15,7 +15,7 @@
             --gold: #d4af37;
             --gold-light: #f4d03f;
             --dark: #0a0a0f;
-            --glass: rgba(255, 255, 255, 0.08);
+            --glass: rgba(255, 255, 255, 0.1);
         }
         
         html, body {
@@ -23,6 +23,44 @@
             overflow: hidden;
             font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
             background: var(--dark);
+        }
+        
+        /* 加载动画 */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loader-heart {
+            font-size: 60px;
+            animation: loaderPulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes loaderPulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+        
+        .loader-text {
+            margin-top: 20px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 4px;
         }
         
         /* 页面容器 */
@@ -34,15 +72,17 @@
             height: 100%;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .page.active {
             opacity: 1;
             visibility: visible;
+            transform: translateY(0);
         }
         
-        /* 背景图 */
+        /* 背景图 - Ken Burns 效果 */
         .bg-image {
             position: absolute;
             top: 0;
@@ -51,9 +91,9 @@
             height: 100%;
             background-size: cover;
             background-position: center;
-            filter: brightness(0.75);
-            transform: scale(1.1);
-            transition: transform 8s ease-out;
+            filter: brightness(0.7) saturate(1.1);
+            transform: scale(1.15);
+            transition: transform 10s ease-out;
         }
         
         .page.active .bg-image {
@@ -73,10 +113,10 @@
             height: 100%;
             background: linear-gradient(
                 to top,
-                rgba(10, 10, 15, 0.95) 0%,
-                rgba(10, 10, 15, 0.6) 40%,
-                rgba(10, 10, 15, 0.2) 70%,
-                rgba(10, 10, 15, 0.4) 100%
+                rgba(10, 10, 15, 0.98) 0%,
+                rgba(10, 10, 15, 0.7) 30%,
+                rgba(10, 10, 15, 0.3) 60%,
+                rgba(10, 10, 15, 0.5) 100%
             );
         }
         
@@ -86,57 +126,73 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            padding: 60px 32px 80px;
+            padding: 60px 32px 100px;
             z-index: 10;
         }
         
-        /* 年份标签 */
-        .year-tag {
-            display: inline-block;
+        /* 时间线标签 */
+        .timeline-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
             font-size: 12px;
-            letter-spacing: 4px;
+            letter-spacing: 3px;
             color: var(--gold);
-            margin-bottom: 16px;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s ease 0.2s;
-        }
-        
-        .page.active .year-tag {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        /* 大标题 */
-        .title {
-            font-size: 72px;
-            font-weight: 100;
-            letter-spacing: 24px;
-            color: #fff;
             margin-bottom: 20px;
             opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease 0.3s;
-            text-shadow: 0 4px 30px rgba(0,0,0,0.5);
+            transform: translateX(-20px);
+            transition: all 0.6s ease 0.3s;
         }
         
-        .page.active .title {
+        .page.active .timeline-badge {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .timeline-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--gold);
+        }
+        
+        /* 大标题 - 打字机效果 */
+        .title {
+            font-size: 80px;
+            font-weight: 100;
+            letter-spacing: 20px;
+            color: #fff;
+            margin-bottom: 24px;
+            text-shadow: 0 4px 30px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+        
+        .title-text {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(100%);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.5s;
+        }
+        
+        .page.active .title-text {
             opacity: 1;
             transform: translateY(0);
         }
         
-        /* 描述卡片 */
+        /* 描述卡片 - 高级玻璃拟态 */
         .desc-card {
-            background: var(--glass);
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 24px 28px;
-            max-width: 340px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            padding: 28px 32px;
+            max-width: 360px;
             opacity: 0;
             transform: translateY(40px);
-            transition: all 0.8s ease 0.5s;
+            transition: all 0.8s ease 0.7s;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
         
         .page.active .desc-card {
@@ -145,26 +201,43 @@
         }
         
         .desc-text {
-            font-size: 16px;
-            line-height: 1.9;
-            color: rgba(255, 255, 255, 0.9);
+            font-size: 17px;
+            line-height: 2;
+            color: rgba(255, 255, 255, 0.92);
         }
         
         .desc-text .highlight {
             color: var(--gold-light);
-            font-weight: 500;
+            font-weight: 600;
         }
         
-        /* 装饰线条 */
+        /* 装饰线条 - 流动效果 */
         .divider-line {
-            width: 60px;
+            width: 80px;
             height: 2px;
-            background: linear-gradient(90deg, var(--gold), transparent);
-            margin: 20px 0;
+            background: linear-gradient(90deg, var(--gold), var(--gold-light), transparent);
+            margin: 24px 0;
             opacity: 0;
             transform: scaleX(0);
             transform-origin: left;
-            transition: all 0.6s ease 0.4s;
+            transition: all 0.8s ease 0.6s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .divider-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            100% { left: 100%; }
         }
         
         .page.active .divider-line {
@@ -174,7 +247,7 @@
         
         /* 页码指示器 */
         .page-indicator {
-            position: absolute;
+            position: fixed;
             top: 50%;
             right: 24px;
             transform: translateY(-50%);
@@ -182,43 +255,117 @@
             flex-direction: column;
             gap: 16px;
             z-index: 100;
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
         
         .indicator {
-            width: 3px;
-            height: 24px;
+            width: 4px;
+            height: 28px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 2px;
             transition: all 0.4s ease;
+            cursor: pointer;
+        }
+        
+        .indicator:hover {
+            background: rgba(255, 255, 255, 0.4);
         }
         
         .indicator.active {
-            height: 40px;
-            background: var(--gold);
-            box-shadow: 0 0 10px var(--gold);
+            height: 48px;
+            background: linear-gradient(to bottom, var(--gold), var(--gold-light));
+            box-shadow: 0 0 15px var(--gold);
+        }
+        
+        /* 音乐控制 */
+        .music-control {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .music-control.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .music-control:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: var(--gold);
+            transform: scale(1.1);
+        }
+        
+        .music-control.playing {
+            animation: musicPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes musicPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
+        }
+        
+        .music-icon {
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .music-control.playing .music-icon {
+            animation: musicWave 1s ease-in-out infinite;
+        }
+        
+        @keyframes musicWave {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
         }
         
         /* 提示文字 */
         .hint {
-            position: absolute;
-            bottom: 32px;
+            position: fixed;
+            bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
             letter-spacing: 3px;
             z-index: 100;
-            animation: pulse 2s infinite;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
         
-        @keyframes pulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.7; }
+        .hint.visible {
+            opacity: 1;
+        }
+        
+        .hint-arrow {
+            animation: bounce 1.5s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(5px); }
         }
         
         /* ===== 封面页 ===== */
         #cover {
-            background: radial-gradient(ellipse at center, #1a1a2e 0%, #000 70%);
+            background: radial-gradient(ellipse at center, #1a1a3e 0%, #000 70%);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -245,6 +392,22 @@
             animation: twinkle 2s infinite;
         }
         
+        .shooting-star {
+            position: absolute;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #fff, transparent);
+            animation: shoot 3s linear infinite;
+            opacity: 0;
+        }
+        
+        @keyframes shoot {
+            0% { transform: translateX(-100px) translateY(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateX(100vw) translateY(100px); opacity: 0; }
+        }
+        
         @keyframes twinkle {
             0%, 100% { opacity: 0.2; transform: scale(1); }
             50% { opacity: 1; transform: scale(1.5); }
@@ -257,7 +420,7 @@
         
         .cover-year {
             font-size: 14px;
-            letter-spacing: 8px;
+            letter-spacing: 10px;
             color: rgba(255,255,255,0.5);
             margin-bottom: 30px;
             opacity: 0;
@@ -265,32 +428,33 @@
         }
         
         .cover-names {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 300;
-            letter-spacing: 4px;
+            letter-spacing: 6px;
             color: #fff;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             opacity: 0;
             animation: fadeIn 1s ease 0.6s forwards;
         }
         
         .cover-names span {
             color: var(--gold);
+            font-weight: 500;
         }
         
         .cover-line {
-            width: 80px;
+            width: 100px;
             height: 1px;
             background: linear-gradient(90deg, transparent, var(--gold), transparent);
-            margin: 0 auto 40px;
+            margin: 0 auto 50px;
             opacity: 0;
             animation: fadeIn 1s ease 0.9s forwards;
         }
         
         .cover-title {
-            font-size: 48px;
+            font-size: 56px;
             font-weight: 100;
-            letter-spacing: 12px;
+            letter-spacing: 16px;
             color: #fff;
             margin-bottom: 60px;
             opacity: 0;
@@ -301,33 +465,34 @@
             display: inline-flex;
             align-items: center;
             gap: 12px;
-            padding: 18px 48px;
+            padding: 20px 56px;
             background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
             border: none;
             border-radius: 50px;
             color: #000;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
-            letter-spacing: 2px;
+            letter-spacing: 4px;
             cursor: pointer;
             opacity: 0;
             transform: scale(0.9);
             animation: fadeInScale 0.8s ease 1.8s forwards;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
         }
         
         .cover-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.4);
+            transform: scale(1.08);
+            box-shadow: 0 15px 50px rgba(212, 175, 55, 0.5);
         }
         
         .cover-btn svg {
             width: 20px;
             height: 20px;
-            animation: bounce 2s infinite;
+            animation: bounceArrow 2s infinite;
         }
         
-        @keyframes bounce {
+        @keyframes bounceArrow {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(5px); }
         }
@@ -346,7 +511,7 @@
             to { opacity: 1; transform: scale(1); }
         }
         
-        /* ===== 求婚页 ===== */
+        /* ===== 求婚词页 ===== */
         #proposal {
             background: radial-gradient(ellipse at center bottom, #1a0a2e 0%, #000 70%);
         }
@@ -412,7 +577,7 @@
             color: rgba(255, 255, 255, 0.6);
             letter-spacing: 3px;
             margin-bottom: 40px;
-            padding: 10px 20px;
+            padding: 12px 24px;
             background: rgba(212, 175, 55, 0.1);
             border: 1px solid rgba(212, 175, 55, 0.3);
             border-radius: 50px;
@@ -463,9 +628,9 @@
         }
         
         .proposal-text {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 300;
-            line-height: 2.2;
+            line-height: 2.4;
             color: #fff;
             margin-bottom: 50px;
         }
@@ -479,24 +644,24 @@
         .proposal-text .line:nth-child(1) { animation: fadeUp 0.8s ease 0.6s forwards; }
         .proposal-text .line:nth-child(2) { animation: fadeUp 0.8s ease 1s forwards; }
         .proposal-text .line:nth-child(3) { animation: fadeUp 0.8s ease 1.4s forwards; }
-        .proposal-text .line:nth-child(4) { animation: fadeUp 0.8s ease 1.8s forwards; }
+        .proposal-text .line:nth-child(4) { 
+            animation: fadeUp 0.8s ease 1.8s forwards;
+            font-size: 42px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-top: 10px;
+        }
         
         @keyframes fadeUp {
             to { opacity: 1; transform: translateY(0); }
         }
         
-        .proposal-text .highlight {
-            font-size: 36px;
-            font-weight: 600;
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
         .continue-btn {
-            margin-top: 40px;
-            padding: 16px 48px;
+            margin-top: 20px;
+            padding: 18px 50px;
             background: transparent;
             border: 2px solid var(--gold);
             border-radius: 50px;
@@ -508,15 +673,33 @@
             transition: all 0.3s ease;
             opacity: 0;
             animation: fadeIn 1s ease 2.5s forwards;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .continue-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .continue-btn:hover::before {
+            left: 100%;
         }
         
         .continue-btn:hover {
             background: var(--gold);
             color: #000;
             transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
         }
         
-        /* ===== 求婚按钮页 ===== */
+        /* ===== 提问页 ===== */
         #question {
             background: radial-gradient(ellipse at center, #1a0a2e 0%, #000 70%);
             display: flex;
@@ -533,30 +716,31 @@
         }
         
         .question-ring {
-            font-size: 80px;
-            margin-bottom: 30px;
+            font-size: 90px;
+            margin-bottom: 40px;
             animation: float 3s ease-in-out infinite;
-            filter: drop-shadow(0 0 40px rgba(212, 175, 55, 0.6));
+            filter: drop-shadow(0 0 50px rgba(212, 175, 55, 0.6));
         }
         
         @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
         }
         
         .question-text {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: 300;
             color: #fff;
             margin-bottom: 60px;
-            line-height: 1.6;
+            line-height: 1.8;
             opacity: 0;
             animation: fadeIn 1s ease 0.3s forwards;
         }
         
         .question-text .name {
             color: var(--gold);
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 42px;
         }
         
         .buttons {
@@ -565,34 +749,45 @@
             gap: 20px;
             align-items: center;
             opacity: 0;
-            animation: fadeInUp 0.8s ease 0.6s forwards;
+            animation: fadeInUp 0.8s ease 0.8s forwards;
         }
         
         .btn-yes {
-            padding: 20px 60px;
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            padding: 24px 70px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+            background-size: 200% 200%;
             border: none;
             border-radius: 50px;
             color: #000;
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 700;
-            letter-spacing: 4px;
+            letter-spacing: 6px;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+            animation: gradientShift 3s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
         
         .btn-yes:hover {
-            transform: scale(1.08);
-            box-shadow: 0 15px 50px rgba(212, 175, 55, 0.5);
+            transform: scale(1.1);
+            box-shadow: 0 20px 60px rgba(212, 175, 55, 0.5);
+        }
+        
+        .btn-yes:active {
+            transform: scale(0.95);
         }
         
         .btn-no {
-            padding: 12px 40px;
+            padding: 14px 40px;
             background: transparent;
             border: 1px solid rgba(255,255,255,0.3);
             border-radius: 30px;
-            color: rgba(255,255,255,0.6);
+            color: rgba(255,255,255,0.5);
             font-size: 14px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -601,11 +796,12 @@
         .btn-no:hover {
             border-color: #e74c3c;
             color: #e74c3c;
+            transform: translateX(5px);
         }
         
         /* ===== 庆祝页 ===== */
         #celebration {
-            background: radial-gradient(ellipse at center, #2d1b4e 0%, #000 70%);
+            background: radial-gradient(ellipse at center, #2d1b4e 0%, #0a0a1a 50%, #000 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -621,16 +817,16 @@
         }
         
         .big-heart {
-            font-size: 120px;
+            font-size: 140px;
             margin-bottom: 30px;
-            animation: heartbeat 1s ease-in-out infinite;
-            filter: drop-shadow(0 0 50px rgba(231, 76, 60, 0.6));
+            animation: heartbeat 0.8s ease-in-out infinite;
+            filter: drop-shadow(0 0 60px rgba(231, 76, 60, 0.6));
         }
         
         .celebration-title {
-            font-size: 48px;
+            font-size: 56px;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, #fff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -648,10 +844,11 @@
         }
         
         .celebration-names {
-            margin-top: 40px;
-            font-size: 24px;
+            margin-top: 50px;
+            font-size: 28px;
             color: var(--gold);
-            letter-spacing: 6px;
+            letter-spacing: 8px;
+            font-weight: 300;
             opacity: 0;
             animation: fadeIn 1s ease 1.2s forwards;
         }
@@ -676,11 +873,11 @@
         
         @keyframes confetti-fall {
             0% {
-                transform: translateY(-100px) rotate(0deg);
+                transform: translateY(-100px) rotate(0deg) scale(1);
                 opacity: 1;
             }
             100% {
-                transform: translateY(100vh) rotate(720deg);
+                transform: translateY(100vh) rotate(720deg) scale(0.5);
                 opacity: 0;
             }
         }
@@ -708,36 +905,79 @@
         /* 爱心雨 */
         .heart-rain {
             position: absolute;
-            font-size: 24px;
+            font-size: 28px;
             animation: heart-fall 3s ease-out forwards;
-            opacity: 0.8;
+            opacity: 0.9;
         }
         
         @keyframes heart-fall {
             0% {
-                transform: translateY(-50px) rotate(0deg);
+                transform: translateY(-50px) rotate(0deg) scale(1);
                 opacity: 1;
             }
             100% {
-                transform: translateY(100vh) rotate(360deg);
+                transform: translateY(100vh) rotate(360deg) scale(0.8);
+                opacity: 0;
+            }
+        }
+        
+        /* 金色粒子 */
+        .gold-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--gold);
+            animation: gold-float 4s ease-out forwards;
+        }
+        
+        @keyframes gold-float {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-20vh) scale(0.5);
                 opacity: 0;
             }
         }
         
         @media (max-height: 700px) {
-            .title { font-size: 56px; }
+            .title { font-size: 64px; letter-spacing: 12px; }
             .ring { font-size: 80px; }
-            .proposal-text { font-size: 24px; }
-            .proposal-text .highlight { font-size: 30px; }
-            .question-text { font-size: 28px; }
-            .celebration-title { font-size: 40px; }
+            .proposal-text { font-size: 28px; }
+            .proposal-text .line:nth-child(4) { font-size: 36px; }
+            .question-text { font-size: 30px; }
+            .question-text .name { font-size: 36px; }
+            .celebration-title { font-size: 44px; }
+            .big-heart { font-size: 100px; }
         }
     </style>
 </head>
 <body>
-    <!-- 封面页 -->
+    <!-- 加载动画 -->
+    <div class="loader" id="loader">
+        <div class="loader-heart">💍</div>
+        <div class="loader-text">加载中...</div>
+    </div>
+
+    <!-- 音乐控制 -->
+    <div class="music-control" id="musicControl" onclick="toggleMusic()">
+        <span class="music-icon" id="musicIcon">🎵</span>
+    </div>
+
+    <!-- 第0页：封面 -->
     <div class="page active" id="cover">
         <div class="cover-stars" id="coverStars"></div>
+        
         <div class="cover-content">
             <div class="cover-year">2024 — 2026</div>
             <div class="cover-names"><span>张立伟</span> · <span>和晨睿</span></div>
@@ -757,16 +997,22 @@
     <div class="page" id="p1">
         <div class="bg-image"></div>
         <div class="overlay"></div>
+        
         <div class="content">
-            <div class="year-tag">2024</div>
-            <h1 class="title">山</h1>
+            <div class="timeline-badge">
+                <div class="timeline-dot"></div>
+                <span>2024 · 相识</span>
+            </div>
+            
+            <h1 class="title"><span class="title-text">山</span></h1>
+            
             <div class="divider-line"></div>
+            
             <div class="desc-card">
                 <p class="desc-text">
                     我们在<span class="highlight">爬山</span>时相识<br>
                     <span class="highlight">张立伟</span> 与 <span class="highlight">和晨睿</span><br>
-                    两年<br>
-                    一起爬过很多座山
+                    两年，一起爬过很多座山
                 </p>
             </div>
         </div>
@@ -776,10 +1022,17 @@
     <div class="page" id="p2">
         <div class="bg-image"></div>
         <div class="overlay"></div>
+        
         <div class="content">
-            <div class="year-tag">第一次演唱会</div>
-            <h1 class="title">星</h1>
+            <div class="timeline-badge">
+                <div class="timeline-dot"></div>
+                <span>第一次演唱会</span>
+            </div>
+            
+            <h1 class="title"><span class="title-text">星</span></h1>
+            
             <div class="divider-line"></div>
+            
             <div class="desc-card">
                 <p class="desc-text">
                     你带我看第一场<span class="highlight">张杰</span><br>
@@ -794,10 +1047,17 @@
     <div class="page" id="p3">
         <div class="bg-image"></div>
         <div class="overlay"></div>
+        
         <div class="content">
-            <div class="year-tag">每一周</div>
-            <h1 class="title">雪</h1>
+            <div class="timeline-badge">
+                <div class="timeline-dot"></div>
+                <span>每一周 · 陪伴</span>
+            </div>
+            
+            <h1 class="title"><span class="title-text">雪</span></h1>
+            
             <div class="divider-line"></div>
+            
             <div class="desc-card">
                 <p class="desc-text">
                     你怕<span class="highlight">滑雪</span>，却每周陪我去<br>
@@ -808,13 +1068,13 @@
         </div>
     </div>
 
-    <!-- 第4页：求婚 -->
+    <!-- 第4页：求婚词 -->
     <div class="page" id="proposal">
         <div class="stars" id="stars"></div>
         <div class="particles" id="particles"></div>
         
         <div class="proposal-content">
-            <div class="song-badge">这就是爱</div>
+            <div class="song-badge">《这就是爱》</div>
             
             <div class="ring-wrapper">
                 <div class="glow"></div>
@@ -825,10 +1085,12 @@
                 <span class="line">山爬过了</span>
                 <span class="line">雪滑过了</span>
                 <span class="line">歌也听过了</span>
-                <span class="line highlight">但我不想停</span>
+                <span class="line">但我不想停</span>
             </div>
             
-            <button class="continue-btn" onclick="goToPage(5)">继续 →</button>
+            <button class="continue-btn" onclick="goToPage(5)">
+                继续 →
+            </button>
         </div>
     </div>
 
@@ -877,27 +1139,77 @@
         <div class="indicator" data-page="6"></div>
     </div>
 
-    <div class="hint" id="hint">点击继续</div>
+    <div class="hint" id="hint">
+        点击或滑动继续 <span class="hint-arrow">↓</span>
+    </div>
 
     <script>
+        // 音频对象（示例，实际使用时替换为真实的音频URL）
+        let audio = null;
+        let isPlaying = false;
+        
         const pages = document.querySelectorAll('.page');
         const indicators = document.querySelectorAll('.indicator');
         const hint = document.getElementById('hint');
         const indicatorContainer = document.getElementById('indicator');
+        const musicControl = document.getElementById('musicControl');
         let currentPage = 0;
         let autoTimer = null;
         let storyStarted = false;
 
-        // 生成封面星星
+        // 页面加载完成后隐藏加载动画
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 1500);
+        });
+
+        // 音乐控制
+        function toggleMusic() {
+            if (!audio) {
+                // 这里可以替换为真实的音频URL
+                // audio = new Audio('https://example.com/music.mp3');
+                // audio.loop = true;
+                alert('🎵 提示：可以在这里添加《这就是爱》背景音乐');
+                return;
+            }
+            
+            if (isPlaying) {
+                audio.pause();
+                musicControl.classList.remove('playing');
+                document.getElementById('musicIcon').textContent = '🔇';
+            } else {
+                audio.play();
+                musicControl.classList.add('playing');
+                document.getElementById('musicIcon').textContent = '🎵';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // 生成封面星星和流星
         function createCoverStars() {
             const container = document.getElementById('coverStars');
-            for (let i = 0; i < 80; i++) {
+            
+            // 普通星星
+            for (let i = 0; i < 100; i++) {
                 const star = document.createElement('div');
                 star.className = 'cover-star';
                 star.style.left = Math.random() * 100 + '%';
                 star.style.top = Math.random() * 100 + '%';
                 star.style.animationDelay = Math.random() * 2 + 's';
+                star.style.width = Math.random() > 0.8 ? '3px' : '2px';
+                star.style.height = star.style.width;
                 container.appendChild(star);
+            }
+            
+            // 流星
+            for (let i = 0; i < 3; i++) {
+                const shooting = document.createElement('div');
+                shooting.className = 'shooting-star';
+                shooting.style.top = Math.random() * 50 + '%';
+                shooting.style.left = Math.random() * 50 + '%';
+                shooting.style.animationDelay = i * 2 + 's';
+                container.appendChild(shooting);
             }
         }
 
@@ -907,7 +1219,7 @@
             containers.forEach(id => {
                 const container = document.getElementById(id);
                 if (!container) return;
-                for (let i = 0; i < 50; i++) {
+                for (let i = 0; i < 60; i++) {
                     const star = document.createElement('div');
                     star.className = 'star';
                     star.style.left = Math.random() * 100 + '%';
@@ -921,7 +1233,7 @@
         // 生成漂浮粒子
         function createParticles() {
             const container = document.getElementById('particles');
-            const particles = ['✨', '💫', '⭐', '🌟'];
+            const particles = ['✨', '💫', '⭐', '🌟', '💛'];
             
             setInterval(() => {
                 if (currentPage !== 4) return;
@@ -931,16 +1243,19 @@
                 p.textContent = particles[Math.floor(Math.random() * particles.length)];
                 p.style.left = Math.random() * 100 + '%';
                 p.style.animationDuration = (5 + Math.random() * 4) + 's';
+                p.style.fontSize = (14 + Math.random() * 10) + 'px';
                 container.appendChild(p);
                 
                 setTimeout(() => p.remove(), 9000);
-            }, 400);
+            }, 300);
         }
 
         // 开始故事
         function startStory() {
             storyStarted = true;
             indicatorContainer.style.opacity = '1';
+            musicControl.classList.add('visible');
+            hint.classList.add('visible');
             goToPage(1);
         }
 
@@ -959,10 +1274,10 @@
             currentPage = index;
             
             // 更新提示
-            if (index === 0 || index === 4 || index === 5 || index === 6) {
-                hint.style.display = 'none';
+            if (index === 0 || index === 5 || index === 6) {
+                hint.classList.remove('visible');
             } else {
-                hint.style.display = 'block';
+                hint.classList.add('visible');
             }
             
             if (index === 0 || index === 6) {
@@ -973,21 +1288,21 @@
             
             // 自动播放
             clearTimeout(autoTimer);
-            if (index >= 1 && index <= 3) { // 山、星、雪三页自动播放
+            if (index >= 1 && index <= 3) {
                 autoTimer = setTimeout(() => goToPage(index + 1), 5000);
             }
             
             // 触发庆祝特效
             if (index === 6) {
-                startCelebration();
+                setTimeout(startCelebration, 500);
             }
         }
 
-        // 点击切换（排除按钮和链接）
+        // 点击切换
         document.addEventListener('click', (e) => {
             if (!storyStarted) return;
-            if (currentPage === 4 || currentPage === 5 || currentPage === 6) return; // 求婚页、提问页、庆祝页不自动切换
-            if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return; // 排除按钮点击
+            if (currentPage === 4 || currentPage === 5 || currentPage === 6) return;
+            if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
             if (currentPage < 4) goToPage(currentPage + 1);
         });
 
@@ -1006,6 +1321,14 @@
             }
         }, {passive: true});
 
+        // 指示器点击
+        indicators.forEach((ind, i) => {
+            ind.addEventListener('click', () => {
+                if (!storyStarted || i > 4) return;
+                goToPage(i);
+            });
+        });
+
         // 愿意！
         function sayYes() {
             goToPage(6);
@@ -1014,23 +1337,29 @@
         // 再考虑一下
         function sayNo() {
             const btn = document.querySelector('.btn-no');
-            btn.textContent = '只能选愿意哦 😊';
+            const texts = ['只能选愿意哦 😊', '别再犹豫了 💍', '快说愿意！❤️'];
+            const randomText = texts[Math.floor(Math.random() * texts.length)];
+            
+            btn.textContent = randomText;
             btn.style.borderColor = '#d4af37';
             btn.style.color = '#d4af37';
+            btn.style.transform = 'translateX(10px)';
+            
             setTimeout(() => {
                 btn.textContent = '再考虑一下';
                 btn.style.borderColor = 'rgba(255,255,255,0.3)';
-                btn.style.color = 'rgba(255,255,255,0.6)';
+                btn.style.color = 'rgba(255,255,255,0.5)';
+                btn.style.transform = 'translateX(0)';
             }, 2000);
         }
 
         // 庆祝特效
         function startCelebration() {
             const container = document.getElementById('confetti');
-            const colors = ['#d4af37', '#f4d03f', '#e74c3c', '#3498db', '#fff', '#ff6b9d'];
+            const colors = ['#d4af37', '#f4d03f', '#e74c3c', '#3498db', '#fff', '#ff6b9d', '#9b59b6'];
             
             // 彩带
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < 150; i++) {
                 setTimeout(() => {
                     const confetti = document.createElement('div');
                     confetti.className = 'confetti';
@@ -1038,48 +1367,64 @@
                     confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
                     confetti.style.animationDelay = Math.random() * 0.5 + 's';
                     confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    confetti.style.width = Math.random() > 0.5 ? '12px' : '8px';
+                    confetti.style.height = confetti.style.width;
                     container.appendChild(confetti);
                     
                     setTimeout(() => confetti.remove(), 4500);
-                }, i * 30);
+                }, i * 20);
             }
             
             // 爱心雨
-            for (let i = 0; i < 30; i++) {
+            for (let i = 0; i < 50; i++) {
                 setTimeout(() => {
                     const heart = document.createElement('div');
                     heart.className = 'heart-rain';
-                    heart.textContent = ['❤️', '💖', '💕', '💗', '💝'][Math.floor(Math.random() * 5)];
+                    heart.textContent = ['❤️', '💖', '💕', '💗', '💝', '💓'][Math.floor(Math.random() * 6)];
                     heart.style.left = Math.random() * 100 + '%';
                     heart.style.animationDelay = Math.random() * 0.5 + 's';
+                    heart.style.fontSize = (20 + Math.random() * 15) + 'px';
                     container.appendChild(heart);
                     
                     setTimeout(() => heart.remove(), 3500);
+                }, i * 80 + 300);
+            }
+            
+            // 金色粒子
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'gold-particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 0.5 + 's';
+                    container.appendChild(particle);
+                    
+                    setTimeout(() => particle.remove(), 4500);
                 }, i * 100 + 500);
             }
             
             // 烟花
-            for (let i = 0; i < 5; i++) {
-                setTimeout(() => createFirework(), i * 300 + 800);
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => createFirework(), i * 250 + 800);
             }
         }
 
         // 烟花
         function createFirework() {
             const container = document.getElementById('confetti');
-            const x = 20 + Math.random() * 60;
+            const x = 15 + Math.random() * 70;
             const y = 20 + Math.random() * 40;
-            const colors = ['#d4af37', '#ff6b9d', '#3498db', '#e74c3c'];
+            const colors = ['#d4af37', '#ff6b9d', '#3498db', '#e74c3c', '#9b59b6', '#fff'];
             const color = colors[Math.floor(Math.random() * colors.length)];
             
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 25; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'firework';
                 particle.style.left = x + '%';
                 particle.style.top = y + '%';
                 particle.style.background = color;
-                const angle = (i / 20) * Math.PI * 2;
-                const distance = 100 + Math.random() * 100;
+                const angle = (i / 25) * Math.PI * 2;
+                const distance = 80 + Math.random() * 80;
                 particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
                 particle.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
                 container.appendChild(particle);
@@ -1092,7 +1437,6 @@
         createCoverStars();
         createStars();
         createParticles();
-        indicatorContainer.style.opacity = '0';
     </script>
 </body>
 </html>
