@@ -11,30 +11,28 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
         
         :root {
             --gold: #d4af37;
             --gold-light: #f4d03f;
-            --rose-gold: #e8b4b8;
+            --rose: #e8b4b8;
             --dark: #0a0a0f;
-            --glass: rgba(255, 255, 255, 0.1);
+            --glass: rgba(255, 255, 255, 0.08);
         }
         
         html, body {
             height: 100%;
             overflow: hidden;
-            font-family: 'Noto Serif SC', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', serif;
+            font-family: 'Noto Serif SC', serif;
             background: var(--dark);
         }
         
-        /* 加载动画 */
+        /* 加载页 */
         .loader {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: radial-gradient(ellipse at center, #1a1a3e 0%, #000 70%);
             display: flex;
             flex-direction: column;
@@ -50,72 +48,91 @@
         }
         
         .loader-ring {
-            width: 80px;
-            height: 80px;
-            border: 3px solid rgba(212, 175, 55, 0.3);
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+        
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 3px solid transparent;
             border-top-color: var(--gold);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            animation: spin 1.5s linear infinite;
+        }
+        
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            inset: 15px;
+            border: 2px solid transparent;
+            border-top-color: var(--rose);
+            border-radius: 50%;
+            animation: spin 1s linear infinite reverse;
         }
         
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
         
-        .loader-heart {
+        .loader-content {
             position: absolute;
-            font-size: 32px;
-            animation: loaderPulse 1.5s ease-in-out infinite;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
         }
         
-        @keyframes loaderPulse {
-            0%, 100% { transform: scale(1); opacity: 0.6; }
-            50% { transform: scale(1.3); opacity: 1; }
+        .loader-heart {
+            font-size: 32px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
         }
         
         .loader-text {
-            margin-top: 30px;
-            font-size: 14px;
-            color: rgba(255,255,255,0.6);
-            letter-spacing: 6px;
+            margin-top: 40px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 8px;
         }
         
-        /* 粒子背景 */
-        .particles-bg {
+        /* 全局粒子背景 */
+        .global-particles {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             pointer-events: none;
             z-index: 1;
+            overflow: hidden;
         }
         
-        .floating-heart {
+        .g-particle {
             position: absolute;
-            font-size: 20px;
-            opacity: 0;
-            animation: floatHeart 8s ease-in-out infinite;
+            font-size: 16px;
+            opacity: 0.3;
+            animation: floatUp 15s linear infinite;
         }
         
-        @keyframes floatHeart {
-            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.6; }
-            90% { opacity: 0.6; }
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
             100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
         }
         
-        /* 页面容器 */
+        /* 页面 */
         .page {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             opacity: 0;
             visibility: hidden;
-            transform: scale(1.1);
-            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: scale(1.05);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 10;
         }
         
@@ -125,18 +142,15 @@
             transform: scale(1);
         }
         
-        /* 背景图 */
+        /* 背景图 - 高级 Ken Burns */
         .bg-image {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background-size: cover;
             background-position: center;
-            filter: brightness(0.65) saturate(1.2);
-            transform: scale(1.2);
-            transition: transform 12s ease-out;
+            filter: brightness(0.6) saturate(1.3) contrast(1.1);
+            transform: scale(1.3);
+            transition: transform 15s ease-out;
         }
         
         .page.active .bg-image {
@@ -147,232 +161,239 @@
         #p2 .bg-image { background-image: url('photo-concert.jpg'); }
         #p3 .bg-image { background-image: url('photo-skiing.jpg'); }
         
-        /* 渐变遮罩 */
-        .overlay {
+        /* 遮罩 */
+        .vignette {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                180deg,
-                rgba(10, 10, 15, 0.3) 0%,
-                rgba(10, 10, 15, 0.1) 30%,
-                rgba(10, 10, 15, 0.6) 60%,
-                rgba(10, 10, 15, 0.98) 100%
-            );
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.4) 100%),
+                linear-gradient(to top, rgba(10,10,15,0.95) 0%, rgba(10,10,15,0.3) 50%, rgba(10,10,15,0.5) 100%);
         }
         
-        /* 内容区域 */
-        .content {
+        /* 引用文字 */
+        .quote {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            padding: 0 30px;
+            z-index: 20;
+        }
+        
+        .quote-text {
+            font-size: 14px;
+            font-style: italic;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 2px;
+            line-height: 1.8;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.8s ease 0.5s;
+        }
+        
+        .page.active .quote-text {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .quote-author {
+            font-size: 11px;
+            color: rgba(212,175,55,0.7);
+            margin-top: 8px;
+            letter-spacing: 3px;
+        }
+        
+        /* 主内容 */
+        .main-content {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            padding: 50px 28px 90px;
+            padding: 40px 28px 100px;
             z-index: 20;
         }
         
-        /* 时间轴样式 */
-        .timeline {
-            display: flex;
+        /* 时间标签 */
+        .time-label {
+            display: inline-flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 16px;
             opacity: 0;
-            transform: translateX(-30px);
-            transition: all 0.8s ease 0.3s;
+            transform: translateX(-20px);
+            transition: all 0.6s ease 0.3s;
         }
         
-        .page.active .timeline {
+        .page.active .time-label {
             opacity: 1;
             transform: translateX(0);
         }
         
-        .timeline-line {
-            width: 40px;
-            height: 1px;
-            background: linear-gradient(90deg, var(--gold), transparent);
+        .time-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--gold);
         }
         
-        .timeline-date {
-            font-size: 13px;
+        .time-text {
+            font-size: 12px;
             color: var(--gold);
             letter-spacing: 3px;
-            font-weight: 400;
         }
         
-        /* 大标题 */
-        .title {
-            font-size: 72px;
+        /* 标题 */
+        .main-title {
+            font-size: 64px;
             font-weight: 300;
-            letter-spacing: 16px;
+            letter-spacing: 12px;
             color: #fff;
-            margin-bottom: 20px;
-            text-shadow: 0 4px 30px rgba(0,0,0,0.5);
+            margin-bottom: 16px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
             overflow: hidden;
         }
         
-        .title-char {
+        .main-title span {
             display: inline-block;
             opacity: 0;
             transform: translateY(100%);
             transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .page.active .title-char {
+        .page.active .main-title span {
             opacity: 1;
             transform: translateY(0);
         }
         
-        /* 描述卡片 */
-        .desc-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
-            backdrop-filter: blur(20px) saturate(200%);
-            -webkit-backdrop-filter: blur(20px) saturate(200%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 24px 28px;
-            max-width: 340px;
+        /* 描述 */
+        .desc-box {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.03) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 20px 24px;
+            max-width: 320px;
             opacity: 0;
             transform: translateY(30px);
             transition: all 0.8s ease 0.6s;
         }
         
-        .page.active .desc-card {
+        .page.active .desc-box {
             opacity: 1;
             transform: translateY(0);
         }
         
         .desc-text {
-            font-size: 16px;
-            line-height: 2;
-            color: rgba(255, 255, 255, 0.9);
+            font-size: 15px;
+            line-height: 1.9;
+            color: rgba(255,255,255,0.9);
         }
         
-        .desc-text .highlight {
+        .desc-text .hl {
             color: var(--gold-light);
             font-weight: 600;
         }
         
-        /* 装饰 */
-        .ornament {
-            width: 60px;
-            height: 1px;
+        /* 装饰线 */
+        .accent-line {
+            width: 50px;
+            height: 2px;
             background: linear-gradient(90deg, var(--gold), transparent);
-            margin: 20px 0;
+            margin: 16px 0;
             opacity: 0;
             transform: scaleX(0);
             transform-origin: left;
-            transition: all 0.8s ease 0.5s;
+            transition: all 0.6s ease 0.5s;
         }
         
-        .page.active .ornament {
+        .page.active .accent-line {
             opacity: 1;
             transform: scaleX(1);
         }
         
         /* 页码 */
-        .page-num {
+        .page-counter {
             position: absolute;
             top: 60px;
-            right: 28px;
-            font-size: 14px;
+            right: 24px;
+            font-size: 13px;
             color: rgba(255,255,255,0.4);
-            letter-spacing: 2px;
             z-index: 30;
         }
         
-        .page-num span {
+        .page-counter .current {
+            font-size: 28px;
             color: var(--gold);
-            font-size: 24px;
             font-weight: 300;
-        }
-        
-        /* 提示 */
-        .hint {
-            position: fixed;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.5);
-            letter-spacing: 3px;
-            z-index: 100;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .hint.visible {
-            opacity: 1;
-        }
-        
-        .hint svg {
-            animation: bounce 1.5s infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(4px); }
         }
         
         /* ===== 封面 ===== */
         #cover {
-            background: radial-gradient(ellipse at center, #1a1a3e 0%, #000 70%);
+            background: radial-gradient(ellipse at center, #1a1a4e 0%, #000 70%);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
             padding: 40px 24px;
         }
         
         .cover-stars {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             overflow: hidden;
         }
         
-        .cover-star {
+        .star {
             position: absolute;
-            width: 2px;
-            height: 2px;
             background: #fff;
             border-radius: 50%;
             animation: twinkle 3s infinite;
         }
         
         @keyframes twinkle {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.8); }
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+        
+        .shooting-star {
+            position: absolute;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #fff, transparent);
+            animation: shoot 4s linear infinite;
+            opacity: 0;
+        }
+        
+        @keyframes shoot {
+            0% { transform: translateX(-100px) translateY(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateX(100vw) translateY(50px); opacity: 0; }
         }
         
         .cover-content {
             position: relative;
             z-index: 10;
+            text-align: center;
         }
         
-        .cover-subtitle {
-            font-size: 13px;
-            letter-spacing: 8px;
+        .cover-pretitle {
+            font-size: 12px;
+            letter-spacing: 10px;
             color: rgba(255,255,255,0.5);
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             opacity: 0;
             animation: fadeIn 1s ease 0.5s forwards;
         }
         
         .cover-names {
-            font-size: 36px;
+            font-size: 40px;
             font-weight: 300;
             letter-spacing: 8px;
             color: #fff;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             opacity: 0;
             animation: fadeIn 1s ease 0.8s forwards;
         }
@@ -383,36 +404,34 @@
         }
         
         .cover-divider {
-            width: 100px;
+            width: 80px;
             height: 1px;
             background: linear-gradient(90deg, transparent, var(--gold), transparent);
-            margin: 0 auto 50px;
+            margin: 0 auto 60px;
             opacity: 0;
             animation: fadeIn 1s ease 1.1s forwards;
         }
         
         .cover-title {
-            font-size: 52px;
+            font-size: 56px;
             font-weight: 200;
             letter-spacing: 20px;
             color: #fff;
-            margin-bottom: 60px;
+            margin-bottom: 70px;
             opacity: 0;
             animation: fadeInUp 1s ease 1.4s forwards;
         }
         
         .cover-btn {
-            padding: 22px 60px;
+            padding: 20px 50px;
             background: transparent;
             border: 2px solid var(--gold);
             border-radius: 50px;
             color: var(--gold);
-            font-size: 16px;
-            font-weight: 500;
+            font-size: 15px;
             letter-spacing: 6px;
             cursor: pointer;
             opacity: 0;
-            transform: scale(0.9);
             animation: fadeInScale 0.8s ease 2s forwards;
             transition: all 0.4s ease;
             position: relative;
@@ -429,37 +448,26 @@
             background: var(--gold);
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            transition: width 0.6s ease, height 0.6s ease;
+            transition: all 0.6s ease;
             z-index: -1;
         }
         
         .cover-btn:hover::before {
-            width: 300px;
-            height: 300px;
+            width: 400px;
+            height: 400px;
         }
         
         .cover-btn:hover {
             color: #000;
-            transform: scale(1.05);
         }
         
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
-        
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes fadeInScale {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        
-        /* ===== 数字统计页 ===== */
+        /* ===== 统计页 ===== */
         #stats {
-            background: radial-gradient(ellipse at center, #151525 0%, #000 70%);
+            background: radial-gradient(ellipse at center, #151530 0%, #000 70%);
+        }
+        
+        .stats-container {
+            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -467,46 +475,56 @@
             padding: 40px 24px;
         }
         
-        .stats-title {
-            font-size: 24px;
-            font-weight: 300;
-            letter-spacing: 8px;
-            color: rgba(255,255,255,0.6);
-            margin-bottom: 50px;
+        .stats-header {
             text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .stats-label {
+            font-size: 12px;
+            letter-spacing: 6px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 12px;
+        }
+        
+        .stats-title {
+            font-size: 32px;
+            font-weight: 300;
+            color: #fff;
+            letter-spacing: 4px;
         }
         
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
             max-width: 340px;
             width: 100%;
         }
         
-        .stat-card {
+        .stat-item {
             background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 20px;
-            padding: 28px 20px;
+            padding: 30px 20px;
             text-align: center;
             opacity: 0;
-            transform: translateY(30px) rotateX(-15deg);
+            transform: translateY(40px) rotateX(-20deg);
             transition: all 0.8s ease;
         }
         
-        .page.active .stat-card:nth-child(1) { transition-delay: 0.3s; }
-        .page.active .stat-card:nth-child(2) { transition-delay: 0.5s; }
-        .page.active .stat-card:nth-child(3) { transition-delay: 0.7s; }
-        .page.active .stat-card:nth-child(4) { transition-delay: 0.9s; }
+        .page.active .stat-item:nth-child(1) { transition-delay: 0.3s; }
+        .page.active .stat-item:nth-child(2) { transition-delay: 0.5s; }
+        .page.active .stat-item:nth-child(3) { transition-delay: 0.7s; }
+        .page.active .stat-item:nth-child(4) { transition-delay: 0.9s; }
         
-        .page.active .stat-card {
+        .page.active .stat-item {
             opacity: 1;
             transform: translateY(0) rotateX(0);
         }
         
-        .stat-number {
+        .stat-value {
             font-size: 48px;
             font-weight: 200;
             color: var(--gold);
@@ -514,18 +532,24 @@
             margin-bottom: 8px;
         }
         
-        .stat-label {
+        .stat-unit {
+            font-size: 14px;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 2px;
+        }
+        
+        .stat-desc {
             font-size: 13px;
             color: rgba(255,255,255,0.6);
-            letter-spacing: 2px;
+            margin-top: 8px;
         }
         
         /* ===== 求婚页 ===== */
         #proposal {
-            background: radial-gradient(ellipse at center bottom, #1a0a2e 0%, #000 70%);
+            background: radial-gradient(ellipse at center bottom, #1a0a3e 0%, #000 70%);
         }
         
-        .proposal-content {
+        .proposal-wrap {
             height: 100%;
             display: flex;
             flex-direction: column;
@@ -535,110 +559,100 @@
             padding: 40px 24px;
         }
         
-        .proposal-badge {
-            font-size: 13px;
+        .proposal-tag {
+            font-size: 12px;
             letter-spacing: 4px;
             color: var(--gold);
             padding: 10px 24px;
-            border: 1px solid rgba(212, 175, 55, 0.4);
+            border: 1px solid rgba(212,175,55,0.4);
             border-radius: 30px;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
             opacity: 0;
             animation: fadeIn 0.8s ease 0.3s forwards;
         }
         
-        .ring-display {
+        .ring-wrap {
             position: relative;
-            margin-bottom: 50px;
+            margin-bottom: 60px;
         }
         
         .ring-glow {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 250px;
-            height: 250px;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, transparent 60%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(212,175,55,0.3) 0%, transparent 50%);
             transform: translate(-50%, -50%);
-            animation: pulseRing 2s ease-in-out infinite;
+            animation: pulseGlow 2s ease-in-out infinite;
         }
         
-        @keyframes pulseRing {
+        @keyframes pulseGlow {
             0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
-            50% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.8; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
         }
         
         .ring-icon {
-            font-size: 100px;
+            font-size: 90px;
             position: relative;
             z-index: 10;
-            animation: floatRing 3s ease-in-out infinite;
-            filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.5));
+            animation: gentleFloat 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 40px rgba(212,175,55,0.5));
         }
         
-        @keyframes floatRing {
+        @keyframes gentleFloat {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
+            50% { transform: translateY(-10px); }
         }
         
-        .proposal-poem {
-            font-size: 26px;
+        .poem {
+            font-size: 22px;
             font-weight: 300;
             line-height: 2.2;
-            color: #fff;
+            color: rgba(255,255,255,0.9);
             margin-bottom: 50px;
+            max-width: 300px;
         }
         
-        .proposal-poem .line {
+        .poem-line {
             display: block;
             opacity: 0;
             transform: translateY(20px);
         }
         
-        .proposal-poem .line:nth-child(1) { animation: fadeUp 0.8s ease 0.6s forwards; }
-        .proposal-poem .line:nth-child(2) { animation: fadeUp 0.8s ease 1s forwards; }
-        .proposal-poem .line:nth-child(3) { animation: fadeUp 0.8s ease 1.4s forwards; }
-        .proposal-poem .line:nth-child(4) { 
-            animation: fadeUp 0.8s ease 1.8s forwards;
-            font-size: 36px;
-            font-weight: 600;
-            background: linear-gradient(135deg, var(--gold), var(--gold-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-top: 10px;
-        }
+        .poem-line:nth-child(1) { animation: fadeUp 0.8s ease 0.6s forwards; }
+        .poem-line:nth-child(2) { animation: fadeUp 0.8s ease 1s forwards; }
+        .poem-line:nth-child(3) { animation: fadeUp 0.8s ease 1.4s forwards; font-size: 32px; font-weight: 600; color: var(--gold); margin-top: 10px; }
         
         @keyframes fadeUp {
             to { opacity: 1; transform: translateY(0); }
         }
         
-        .proposal-btn {
-            padding: 18px 50px;
+        .proposal-cta {
+            padding: 16px 40px;
             background: transparent;
             border: 2px solid var(--gold);
             border-radius: 50px;
             color: var(--gold);
-            font-size: 15px;
-            font-weight: 500;
+            font-size: 14px;
             letter-spacing: 4px;
             cursor: pointer;
             opacity: 0;
-            animation: fadeIn 1s ease 2.5s forwards;
+            animation: fadeIn 1s ease 2.2s forwards;
             transition: all 0.3s ease;
         }
         
-        .proposal-btn:hover {
+        .proposal-cta:hover {
             background: var(--gold);
             color: #000;
-            transform: scale(1.05);
         }
         
         /* ===== 提问页 ===== */
         #question {
-            background: radial-gradient(ellipse at center, #1a0a2e 0%, #000 70%);
+            background: radial-gradient(ellipse at center, #1a0a3e 0%, #000 70%);
         }
         
-        .question-content {
+        .question-wrap {
             height: 100%;
             display: flex;
             flex-direction: column;
@@ -648,82 +662,88 @@
             padding: 40px 24px;
         }
         
-        .question-icon {
+        .question-ring {
             font-size: 80px;
             margin-bottom: 40px;
-            animation: gentleFloat 4s ease-in-out infinite;
-            filter: drop-shadow(0 0 40px rgba(212, 175, 55, 0.5));
+            animation: swing 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 40px rgba(212,175,55,0.4));
         }
         
-        @keyframes gentleFloat {
-            0%, 100% { transform: translateY(0) rotate(-3deg); }
-            50% { transform: translateY(-10px) rotate(3deg); }
+        @keyframes swing {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+        
+        .question-title {
+            font-size: 24px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 16px;
+            opacity: 0;
+            animation: fadeIn 0.8s ease 0.3s forwards;
+        }
+        
+        .question-name {
+            font-size: 48px;
+            font-weight: 600;
+            color: var(--gold);
+            margin-bottom: 10px;
+            opacity: 0;
+            animation: fadeIn 0.8s ease 0.5s forwards;
         }
         
         .question-text {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 300;
-            line-height: 1.8;
             color: #fff;
-            margin-bottom: 50px;
+            margin-bottom: 60px;
             opacity: 0;
-            animation: fadeIn 1s ease 0.3s forwards;
+            animation: fadeIn 0.8s ease 0.7s forwards;
         }
         
-        .question-text .name {
-            color: var(--gold);
-            font-weight: 600;
-            font-size: 40px;
-        }
-        
-        .answer-buttons {
+        .answer-btns {
             display: flex;
             flex-direction: column;
             gap: 16px;
             opacity: 0;
-            animation: fadeInUp 0.8s ease 0.8s forwards;
+            animation: fadeInUp 0.8s ease 1s forwards;
         }
         
         .btn-yes {
-            padding: 24px 70px;
-            background: linear-gradient(135deg, var(--gold) 0%, #c9a227 100%);
+            padding: 22px 60px;
+            background: linear-gradient(135deg, var(--gold) 0%, #b8941f 100%);
             border: none;
             border-radius: 50px;
             color: #000;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
             letter-spacing: 6px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+            box-shadow: 0 10px 30px rgba(212,175,55,0.4);
         }
         
         .btn-yes:hover {
             transform: scale(1.08);
-            box-shadow: 0 20px 50px rgba(212, 175, 55, 0.6);
+            box-shadow: 0 20px 50px rgba(212,175,55,0.6);
         }
         
-        .btn-yes:active {
-            transform: scale(0.98);
-        }
-        
-        .btn-maybe {
-            padding: 12px 36px;
+        .btn-other {
+            padding: 12px 32px;
             background: transparent;
             border: 1px solid rgba(255,255,255,0.2);
             border-radius: 30px;
             color: rgba(255,255,255,0.4);
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
         
         /* ===== 庆祝页 ===== */
         #celebration {
-            background: radial-gradient(ellipse at center, #2d1b4e 0%, #0a0a1a 50%, #000 100%);
+            background: radial-gradient(ellipse at center, #2d1b5e 0%, #0a0a1a 50%, #000 100%);
         }
         
-        .celebration-content {
+        .celebration-wrap {
             height: 100%;
             display: flex;
             flex-direction: column;
@@ -734,11 +754,18 @@
             position: relative;
         }
         
-        .celebration-heart {
+        .big-heart {
             font-size: 120px;
             margin-bottom: 30px;
             animation: heartbeat 0.8s ease-in-out infinite;
-            filter: drop-shadow(0 0 50px rgba(231, 76, 60, 0.5));
+            filter: drop-shadow(0 0 50px rgba(231,76,60,0.5));
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.1); }
         }
         
         .celebration-title {
@@ -747,37 +774,49 @@
             background: linear-gradient(135deg, var(--gold), var(--gold-light), #fff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             opacity: 0;
             animation: fadeInScale 0.8s ease 0.5s forwards;
         }
         
         .celebration-date {
-            font-size: 16px;
+            font-size: 14px;
             color: rgba(255,255,255,0.6);
             letter-spacing: 4px;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             opacity: 0;
             animation: fadeIn 1s ease 1s forwards;
         }
         
-        .celebration-names {
-            font-size: 28px;
+        .final-names {
+            font-size: 32px;
             color: var(--gold);
-            letter-spacing: 10px;
+            letter-spacing: 12px;
             font-weight: 300;
             opacity: 0;
             animation: fadeIn 1s ease 1.5s forwards;
         }
         
-        /* 特效容器 */
-        .effects-container {
+        .signature {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            bottom: 60px;
+            font-size: 16px;
+            font-style: italic;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 2px;
+            opacity: 0;
+            animation: fadeIn 1s ease 2s forwards;
+        }
+        
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        /* 特效层 */
+        .effects-layer {
+            position: absolute;
+            inset: 0;
             overflow: hidden;
             pointer-events: none;
         }
@@ -796,7 +835,6 @@
         /* 爱心 */
         .falling-heart {
             position: absolute;
-            font-size: 24px;
             animation: heartFall 3s ease-out forwards;
         }
         
@@ -806,7 +844,7 @@
         }
         
         /* 烟花 */
-        .firework-particle {
+        .firework-p {
             position: absolute;
             width: 4px;
             height: 4px;
@@ -815,90 +853,87 @@
         }
         
         @keyframes firework {
-            0% { transform: translate(0, 0) scale(1); opacity: 1; }
-            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+            0% { transform: translate(0,0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx),var(--ty)) scale(0); opacity: 0; }
         }
         
-        /* 金色光点 */
-        .sparkle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: var(--gold);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--gold);
-            animation: sparkle 3s ease-out forwards;
-        }
-        
-        @keyframes sparkle {
-            0% { transform: scale(0); opacity: 0; }
-            50% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(0); opacity: 0; }
-        }
-        
-        /* 进度点 */
-        .progress-dots {
+        /* 底部进度条 */
+        .bottom-progress {
             position: fixed;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: rgba(255,255,255,0.1);
             z-index: 100;
             opacity: 0;
             transition: opacity 0.5s ease;
         }
         
-        .progress-dots.visible {
+        .bottom-progress.visible {
             opacity: 1;
         }
         
-        .dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.2);
-            transition: all 0.3s ease;
-        }
-        
-        .dot.active {
-            background: var(--gold);
-            transform: scale(1.5);
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--gold-light));
+            transition: width 0.5s ease;
             box-shadow: 0 0 10px var(--gold);
         }
         
+        /* 提示 */
+        .nav-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 2px;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .nav-hint.visible {
+            opacity: 1;
+        }
+        
         @media (max-height: 700px) {
-            .title { font-size: 56px; letter-spacing: 12px; }
-            .cover-title { font-size: 40px; letter-spacing: 12px; }
-            .cover-names { font-size: 28px; }
-            .stat-number { font-size: 40px; }
-            .proposal-poem { font-size: 22px; }
-            .proposal-poem .line:nth-child(4) { font-size: 30px; }
-            .question-text { font-size: 26px; }
-            .question-text .name { font-size: 34px; }
+            .main-title { font-size: 52px; letter-spacing: 8px; }
+            .cover-title { font-size: 42px; letter-spacing: 14px; }
+            .cover-names { font-size: 32px; }
+            .stat-value { font-size: 40px; }
+            .poem { font-size: 18px; }
+            .poem-line:nth-child(3) { font-size: 26px; }
             .celebration-title { font-size: 42px; }
-            .celebration-heart { font-size: 90px; }
+            .big-heart { font-size: 90px; }
         }
     </style>
 </head>
 <body>
-    <!-- 加载动画 -->
+    <!-- 加载 -->
     <div class="loader" id="loader">
         <div class="loader-ring"></div>
-        <div class="loader-heart">💍</div>
-        <div class="loader-text">准备中...</div>
+        <div class="loader-content">
+            <div class="loader-heart">💍</div>
+        </div>
+        <div class="loader-text">准备中</div>
     </div>
 
-    <!-- 漂浮爱心背景 -->
-    <div class="particles-bg" id="particlesBg"></div>
+    <!-- 全局粒子 -->
+    <div class="global-particles" id="gParticles"></div>
 
-    <!-- 第0页：封面 -->
+    <!-- 封面 -->
     <div class="page active" id="cover">
         <div class="cover-stars" id="coverStars"></div>
         
         <div class="cover-content">
-            <div class="cover-subtitle">2024 — 2026</div>
-            <div class="cover-names"><span>张立伟</span> · <span>和晨睿</span></div>
+            <div class="cover-pretitle">2024 — 2026</div>
+            <div class="cover-names"><span>张立伟</span> & <span>和晨睿</span></div>
             <div class="cover-divider"></div>
             <div class="cover-title">我们的故事</div>
             
@@ -908,375 +943,378 @@
         </div>
     </div>
 
-    <!-- 第1页：相识 -->
+    <!-- 山 -->
     <div class="page" id="p1">
         <div class="bg-image"></div>
-        <div class="overlay"></div>
-        <div class="page-num"><span>01</span> / 07</div>
+        <div class="vignette"></div>
         
-        <div class="content">
-            <div class="timeline">
-                <div class="timeline-line"></div>
-                <div class="timeline-date">2024 · 春</div>
+        <div class="quote">
+            <div class="quote-text">"最好的相遇，是两个人一起变得更好"</div>
+        </div>
+        
+        <div class="page-counter"><span class="current">01</span> / 07</div>
+        
+        <div class="main-content">
+            <div class="time-label">
+                <div class="time-dot"></div>
+                <div class="time-text">2024年 · 春</div>
             </div>
             
-            <h1 class="title">
-                <span class="title-char" style="transition-delay: 0.4s">相</span>
-                <span class="title-char" style="transition-delay: 0.5s">识</span>
+            <h1 class="main-title">
+                <span style="transition-delay: 0.4s">相</span>
+                <span style="transition-delay: 0.5s">识</span>
             </h1>
             
-            <div class="ornament"></div>
+            <div class="accent-line"></div>
             
-            <div class="desc-card">
+            <div class="desc-box">
                 <p class="desc-text">
                     我们在爬山时相遇<br>
-                    <span class="highlight">张立伟</span> 与 <span class="highlight">和晨睿</span><br>
-                    从那一刻起，山有了不同的意义
+                    <span class="hl">张立伟</span> 与 <span class="hl">和晨睿</span><br>
+                    从那一刻起，山有了新的意义
                 </p>
             </div>
         </div>
     </div>
 
-    <!-- 第2页：演唱会 -->
+    <!-- 星 -->
     <div class="page" id="p2">
         <div class="bg-image"></div>
-        <div class="overlay"></div>
-        <div class="page-num"><span>02</span> / 07</div>
+        <div class="vignette"></div>
         
-        <div class="content">
-            <div class="timeline">
-                <div class="timeline-line"></div>
-                <div class="timeline-date">第一次演唱会</div>
+        <div class="quote">
+            <div class="quote-text">"音乐是爱情的语言，而你是我最爱的旋律"</div>
+        </div>
+        
+        <div class="page-counter"><span class="current">02</span> / 07</div>
+        
+        <div class="main-content">
+            <div class="time-label">
+                <div class="time-dot"></div>
+                <div class="time-text">第一次演唱会</div>
             </div>
             
-            <h1 class="title">
-                <span class="title-char" style="transition-delay: 0.4s">初</span>
-                <span class="title-char" style="transition-delay: 0.5s">见</span>
+            <h1 class="main-title">
+                <span style="transition-delay: 0.4s">初</span>
+                <span style="transition-delay: 0.5s">见</span>
             </h1>
             
-            <div class="ornament"></div>
+            <div class="accent-line"></div>
             
-            <div class="desc-card">
+            <div class="desc-box">
                 <p class="desc-text">
-                    你带我看第一场<span class="highlight">张杰</span><br>
+                    你带我看第一场<span class="hl">张杰</span>演唱会<br>
                     那是我人生中第一次演唱会<br>
-                    也是我第一次觉得，歌声可以如此动人
+                    也是我第一次觉得，星光可以如此动人
                 </p>
             </div>
         </div>
     </div>
 
-    <!-- 第3页：滑雪 -->
+    <!-- 雪 -->
     <div class="page" id="p3">
         <div class="bg-image"></div>
-        <div class="overlay"></div>
-        <div class="page-num"><span>03</span> / 07</div>
+        <div class="vignette"></div>
         
-        <div class="content">
-            <div class="timeline">
-                <div class="timeline-line"></div>
-                <div class="timeline-date">每周的陪伴</div>
+        <div class="quote">
+            <div class="quote-text">"爱是陪你做你热爱的事，哪怕自己害怕"</div>
+        </div>
+        
+        <div class="page-counter"><span class="current">03</span> / 07</div>
+        
+        <div class="main-content">
+            <div class="time-label">
+                <div class="time-dot"></div>
+                <div class="time-text">每周的陪伴</div>
             </div>
             
-            <h1 class="title">
-                <span class="title-char" style="transition-delay: 0.4s">陪</span>
-                <span class="title-char" style="transition-delay: 0.5s">伴</span>
+            <h1 class="main-title">
+                <span style="transition-delay: 0.4s">陪</span>
+                <span style="transition-delay: 0.5s">伴</span>
             </h1>
             
-            <div class="ornament"></div>
+            <div class="accent-line"></div>
             
-            <div class="desc-card">
+            <div class="desc-box">
                 <p class="desc-text">
                     你怕滑雪，却每周都陪我去<br>
                     从颤抖到自信，从害怕到热爱<br>
-                    <span class="highlight">爱，就是陪你做你热爱的事</span>
+                    <span class="hl">这就是爱的模样</span>
                 </p>
             </div>
         </div>
     </div>
 
-    <!-- 第4页：数字统计 -->
+    <!-- 统计 -->
     <div class="page" id="stats">
-        <div class="stats-title">我们的数字</div>
-        
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number" id="daysCount">730</div>
-                <div class="stat-label">相识天数</div>
+        <div class="stats-container">
+            <div class="stats-header">
+                <div class="stats-label">OUR NUMBERS</div>
+                <div class="stats-title">我们的数字</div>
             </div>
             
-            <div class="stat-card">
-                <div class="stat-number">100+</div>
-                <div class="stat-label">一起滑雪</div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-number">3</div>
-                <div class="stat-label">张杰演唱会</div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-number">∞</div>
-                <div class="stat-label">未来时光</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="daysNum">0</div>
+                    <div class="stat-unit">天</div>
+                    <div class="stat-desc">相识至今</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-value">100+</div>
+                    <div class="stat-unit">次</div>
+                    <div class="stat-desc">一起滑雪</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-value">3</div>
+                    <div class="stat-unit">场</div>
+                    <div class="stat-desc">张杰演唱会</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-value">∞</div>
+                    <div class="stat-unit"></div>
+                    <div class="stat-desc">未来时光</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- 第5页：求婚 -->
+    <!-- 求婚 -->
     <div class="page" id="proposal">
-        <div class="proposal-content">
-            <div class="proposal-badge">《这就是爱》</div>
+        <div class="proposal-wrap">
+            <div class="proposal-tag">《这就是爱》</div>
             
-            <div class="ring-display">
+            <div class="ring-wrap">
                 <div class="ring-glow"></div>
                 <div class="ring-icon">💍</div>
             </div>
             
-            <div class="proposal-poem">
-                <span class="line">两年时光</span>
-                <span class="line">我们爬过山、滑过雪、听过歌</span>
-                <span class="line">但故事才刚开始</span>
-                <span class="line">我想继续写下去</span>
+            <div class="poem">
+                <span class="poem-line">两年时光</span>
+                <span class="poem-line">我们一起经历了那么多</span>
+                <span class="poem-line">但我想继续写下去</span>
             </div>
             
-            <button class="proposal-btn" onclick="goToPage(6)">
+            <button class="proposal-cta" onclick="goToPage(6)">
                 继续
             </button>
         </div>
     </div>
 
-    <!-- 第6页：提问 -->
+    <!-- 提问 -->
     <div class="page" id="question">
-        <div class="question-content">
-            <div class="question-icon">💍</div>
+        <div class="question-wrap">
+            <div class="question-ring">💍</div>
             
-            <div class="question-text">
-                <span class="name">和晨睿</span><br>
-                你愿意嫁给我吗？
-            </div>
+            <div class="question-title">此刻，我想问你</div>
             
-            <div class="answer-buttons">
+            <div class="question-name">和晨睿</div>
+            
+            <div class="question-text">你愿意嫁给我吗？</div>
+            
+            <div class="answer-btns">
                 <button class="btn-yes" onclick="sayYes()">我愿意</button>
-                <button class="btn-maybe" onclick="sayNo()">让我想想...</button>
+                <button class="btn-other" onclick="sayOther()">让我想想...</button>
             </div>
         </div>
     </div>
 
-    <!-- 第7页：庆祝 -->
+    <!-- 庆祝 -->
     <div class="page" id="celebration">
-        <div class="effects-container" id="effects"></div>
+        <div class="effects-layer" id="effects"></div>
         
-        <div class="celebration-content">
-            <div class="celebration-heart">❤️</div>
+        <div class="celebration-wrap">
+            <div class="big-heart">❤️</div>
             
             <div class="celebration-title">她答应了！</div>
             
-            <div class="celebration-date">2026年 张杰演唱会</div>
+            <div class="celebration-date">2026年 · 张杰演唱会</div>
             
-            <div class="celebration-names">张立伟 ♥ 和晨睿</div>
+            <div class="final-names">张立伟 ♥ 和晨睿</div>
+            
+            <div class="signature">Thank you for being my everything</div>
         </div>
     </div>
 
-    <!-- 进度点 -->
-    <div class="progress-dots" id="progressDots">
-        <div class="dot active"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
+    <!-- 底部进度条 -->
+    <div class="bottom-progress" id="bProgress">
+        <div class="progress-fill" id="pFill"></div>
     </div>
 
     <!-- 提示 -->
-    <div class="hint" id="hint">
-        滑动或点击继续
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 5v14M5 12l7 7 7-7"/>
-        </svg>
+    <div class="nav-hint" id="navHint">
+        上滑或点击继续 ↓
     </div>
 
     <script>
-        const pages = ['cover', 'p1', 'p2', 'p3', 'stats', 'proposal', 'question', 'celebration'];
-        let currentPage = 0;
+        const pageIds = ['cover', 'p1', 'p2', 'p3', 'stats', 'proposal', 'question', 'celebration'];
+        let currentIdx = 0;
         let storyStarted = false;
-        let autoTimer = null;
 
-        // 页面加载
+        // 初始化
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('loader').classList.add('hidden');
-                initCoverStars();
-                initFloatingHearts();
-            }, 2000);
-            
-            // 计算相识天数
-            calculateDays();
+                initStars();
+                initGlobalParticles();
+                calcDays();
+            }, 2500);
         });
 
-        // 计算相识天数
-        function calculateDays() {
-            // 假设2024年初相识，可以修改具体日期
-            const startDate = new Date('2024-01-01');
-            const today = new Date('2026-03-09');
-            const diffTime = Math.abs(today - startDate);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        // 计算天数
+        function calcDays() {
+            const start = new Date('2024-03-01'); // 可以修改成真实相识日期
+            const now = new Date();
+            const days = Math.floor((now - start) / (1000 * 60 * 60 * 24));
             
-            // 数字滚动动画
-            animateNumber('daysCount', diffDays);
-        }
-
-        // 数字滚动
-        function animateNumber(id, target) {
-            const el = document.getElementById(id);
-            let current = 0;
-            const increment = Math.ceil(target / 50);
+            // 数字滚动
+            const el = document.getElementById('daysNum');
+            let n = 0;
+            const step = Math.ceil(days / 40);
             const timer = setInterval(() => {
-                current += increment;
-                if (current >= target) {
-                    current = target;
+                n += step;
+                if (n >= days) {
+                    n = days;
                     clearInterval(timer);
                 }
-                el.textContent = current;
-            }, 30);
+                el.textContent = n;
+            }, 25);
         }
 
-        // 封面星星
-        function initCoverStars() {
+        // 星星
+        function initStars() {
             const container = document.getElementById('coverStars');
-            for (let i = 0; i < 120; i++) {
-                const star = document.createElement('div');
-                star.className = 'cover-star';
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                star.style.animationDelay = Math.random() * 3 + 's';
-                star.style.width = Math.random() > 0.9 ? '3px' : '2px';
-                star.style.height = star.style.width;
-                container.appendChild(star);
+            // 普通星星
+            for (let i = 0; i < 150; i++) {
+                const s = document.createElement('div');
+                s.className = 'star';
+                s.style.left = Math.random() * 100 + '%';
+                s.style.top = Math.random() * 100 + '%';
+                s.style.width = Math.random() > 0.95 ? '3px' : Math.random() > 0.8 ? '2px' : '1px';
+                s.style.height = s.style.width;
+                s.style.animationDelay = Math.random() * 3 + 's';
+                s.style.animationDuration = (2 + Math.random() * 2) + 's';
+                container.appendChild(s);
+            }
+            // 流星
+            for (let i = 0; i < 4; i++) {
+                const m = document.createElement('div');
+                m.className = 'shooting-star';
+                m.style.top = Math.random() * 40 + '%';
+                m.style.animationDelay = (i * 1.5 + 2) + 's';
+                container.appendChild(m);
             }
         }
 
-        // 漂浮爱心
-        function initFloatingHearts() {
-            const container = document.getElementById('particlesBg');
-            const hearts = ['💕', '💖', '💗', '💓', '💝'];
+        // 全局粒子
+        function initGlobalParticles() {
+            const container = document.getElementById('gParticles');
+            const hearts = ['💕', '💖', '💗', '💓', '✨', '💫'];
             
             setInterval(() => {
-                const heart = document.createElement('div');
-                heart.className = 'floating-heart';
-                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-                heart.style.left = Math.random() * 100 + '%';
-                heart.style.fontSize = (15 + Math.random() * 15) + 'px';
-                heart.style.animationDuration = (6 + Math.random() * 4) + 's';
-                container.appendChild(heart);
+                const p = document.createElement('div');
+                p.className = 'g-particle';
+                p.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                p.style.left = Math.random() * 100 + '%';
+                p.style.fontSize = (12 + Math.random() * 20) + 'px';
+                p.style.animationDuration = (12 + Math.random() * 8) + 's';
+                container.appendChild(p);
                 
-                setTimeout(() => heart.remove(), 10000);
-            }, 2000);
+                setTimeout(() => p.remove(), 20000);
+            }, 1500);
         }
 
-        // 开始故事
+        // 开始
         function startStory() {
             storyStarted = true;
-            document.getElementById('progressDots').classList.add('visible');
-            document.getElementById('hint').classList.add('visible');
+            document.getElementById('bProgress').classList.add('visible');
+            document.getElementById('navHint').classList.add('visible');
             goToPage(1);
         }
 
         // 切换页面
-        function goToPage(index) {
-            if (index < 0 || index >= pages.length) return;
+        function goToPage(idx) {
+            if (idx < 0 || idx >= pageIds.length) return;
             
-            // 隐藏当前页
-            document.getElementById(pages[currentPage]).classList.remove('active');
+            // 隐藏当前
+            document.getElementById(pageIds[currentIdx]).classList.remove('active');
             
             // 显示新页
-            currentPage = index;
-            document.getElementById(pages[currentPage]).classList.add('active');
+            currentIdx = idx;
+            document.getElementById(pageIds[currentIdx]).classList.add('active');
             
-            // 更新进度点
-            updateProgressDots();
+            // 更新进度条
+            const progress = (idx / (pageIds.length - 1)) * 100;
+            document.getElementById('pFill').style.width = progress + '%';
             
             // 更新提示
-            updateHint();
+            const hint = document.getElementById('navHint');
+            const bProgress = document.getElementById('bProgress');
             
-            // 自动播放
-            clearTimeout(autoTimer);
-            if (index >= 1 && index <= 3) {
-                autoTimer = setTimeout(() => goToPage(index + 1), 6000);
-            }
-            
-            // 触发庆祝
-            if (index === 7) {
-                setTimeout(startCelebration, 600);
-            }
-        }
-
-        // 更新进度点
-        function updateProgressDots() {
-            const dots = document.querySelectorAll('.dot');
-            dots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === currentPage);
-            });
-        }
-
-        // 更新提示
-        function updateHint() {
-            const hint = document.getElementById('hint');
-            const dots = document.getElementById('progressDots');
-            
-            if (currentPage === 0 || currentPage === 6 || currentPage === 7) {
+            if (idx === 0 || idx === 6 || idx === 7) {
                 hint.classList.remove('visible');
             } else {
                 hint.classList.add('visible');
             }
             
-            if (currentPage === 0 || currentPage === 7) {
-                dots.classList.remove('visible');
+            if (idx === 0 || idx === 7) {
+                bProgress.classList.remove('visible');
             } else {
-                dots.classList.add('visible');
+                bProgress.classList.add('visible');
+            }
+            
+            // 自动播放
+            if (idx >= 1 && idx <= 3) {
+                clearTimeout(window.autoTimer);
+                window.autoTimer = setTimeout(() => goToPage(idx + 1), 6000);
+            }
+            
+            // 庆祝
+            if (idx === 7) {
+                setTimeout(startCelebration, 800);
+                // 震动反馈
+                if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
             }
         }
 
         // 点击切换
         document.addEventListener('click', (e) => {
-            if (!storyStarted || currentPage === 5 || currentPage === 6 || currentPage === 7) return;
+            if (!storyStarted) return;
+            if (currentIdx === 5 || currentIdx === 6 || currentIdx === 7) return;
             if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
-            if (currentPage < 5) goToPage(currentPage + 1);
+            if (currentIdx < 5) goToPage(currentIdx + 1);
         });
 
         // 滑动切换
-        let touchStartY = 0;
-        document.addEventListener('touchstart', e => {
-            touchStartY = e.changedTouches[0].screenY;
-        }, {passive: true});
-
+        let tsY = 0;
+        document.addEventListener('touchstart', e => tsY = e.touches[0].clientY, {passive: true});
+        
         document.addEventListener('touchend', e => {
-            if (!storyStarted || currentPage === 5 || currentPage === 6 || currentPage === 7) return;
-            const diff = touchStartY - e.changedTouches[0].screenY;
-            if (Math.abs(diff) > 50) {
-                if (diff > 0 && currentPage < 5) goToPage(currentPage + 1);
-                else if (diff < 0 && currentPage > 1) goToPage(currentPage - 1);
+            if (!storyStarted || currentIdx === 5 || currentIdx === 6 || currentIdx === 7) return;
+            const diff = tsY - e.changedTouches[0].clientY;
+            if (Math.abs(diff) > 60) {
+                if (diff > 0 && currentIdx < 5) goToPage(currentIdx + 1);
+                else if (diff < 0 && currentIdx > 1) goToPage(currentIdx - 1);
             }
         }, {passive: true});
 
-        // 愿意！
+        // 愿意
         function sayYes() {
             goToPage(7);
+            if (navigator.vibrate) navigator.vibrate([50, 30, 50, 30, 100]);
         }
 
-        // 再考虑一下
-        function sayNo() {
-            const btn = document.querySelector('.btn-maybe');
-            const messages = [
-                '别犹豫啦 😊',
-                '快说愿意！💍',
-                '我等不及了 ❤️',
-                '只能选愿意哦'
-            ];
-            btn.textContent = messages[Math.floor(Math.random() * messages.length)];
+        // 其他
+        function sayOther() {
+            const btn = document.querySelector('.btn-other');
+            const msgs = ['别犹豫啦 💍', '快说愿意！❤️', '我等不及了 ✨', '只能选愿意哦 😊'];
+            btn.textContent = msgs[Math.floor(Math.random() * msgs.length)];
             btn.style.borderColor = '#d4af37';
             btn.style.color = '#d4af37';
+            
+            if (navigator.vibrate) navigator.vibrate(50);
             
             setTimeout(() => {
                 btn.textContent = '让我想想...';
@@ -1288,57 +1326,42 @@
         // 庆祝特效
         function startCelebration() {
             const container = document.getElementById('effects');
-            const colors = ['#d4af37', '#f4d03f', '#e74c3c', '#3498db', '#fff', '#ff6b9d', '#9b59b6'];
+            const colors = ['#d4af37', '#f4d03f', '#e74c3c', '#3498db', '#fff', '#ff6b9d'];
             
-            // 彩带
-            for (let i = 0; i < 200; i++) {
+            // 彩带 300个
+            for (let i = 0; i < 300; i++) {
                 setTimeout(() => {
-                    const confetti = document.createElement('div');
-                    confetti.className = 'confetti';
-                    confetti.style.left = Math.random() * 100 + '%';
-                    confetti.style.width = (8 + Math.random() * 8) + 'px';
-                    confetti.style.height = confetti.style.width;
-                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-                    confetti.style.animationDelay = Math.random() * 0.3 + 's';
-                    container.appendChild(confetti);
-                    
-                    setTimeout(() => confetti.remove(), 4500);
-                }, i * 15);
+                    const c = document.createElement('div');
+                    c.className = 'confetti';
+                    c.style.left = Math.random() * 100 + '%';
+                    c.style.width = (6 + Math.random() * 10) + 'px';
+                    c.style.height = c.style.width;
+                    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    c.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    c.style.animationDelay = Math.random() * 0.5 + 's';
+                    c.style.animationDuration = (3 + Math.random() * 2) + 's';
+                    container.appendChild(c);
+                    setTimeout(() => c.remove(), 5000);
+                }, i * 10);
             }
             
-            // 爱心雨
-            for (let i = 0; i < 60; i++) {
+            // 爱心 80个
+            for (let i = 0; i < 80; i++) {
                 setTimeout(() => {
-                    const heart = document.createElement('div');
-                    heart.className = 'falling-heart';
-                    heart.textContent = ['❤️', '💖', '💕', '💗', '💝', '💓'][Math.floor(Math.random() * 6)];
-                    heart.style.left = Math.random() * 100 + '%';
-                    heart.style.fontSize = (20 + Math.random() * 20) + 'px';
-                    heart.style.animationDelay = Math.random() * 0.5 + 's';
-                    container.appendChild(heart);
-                    
-                    setTimeout(() => heart.remove(), 3500);
-                }, i * 60 + 200);
+                    const h = document.createElement('div');
+                    h.className = 'falling-heart';
+                    h.textContent = ['❤️','💖','💕','💗','💝','💓'][Math.floor(Math.random()*6)];
+                    h.style.left = Math.random() * 100 + '%';
+                    h.style.fontSize = (18 + Math.random() * 25) + 'px';
+                    h.style.animationDelay = Math.random() * 0.5 + 's';
+                    container.appendChild(h);
+                    setTimeout(() => h.remove(), 3500);
+                }, i * 40 + 200);
             }
             
-            // 烟花
-            for (let i = 0; i < 10; i++) {
-                setTimeout(() => createFirework(), i * 200 + 500);
-            }
-            
-            // 金色光点
-            for (let i = 0; i < 40; i++) {
-                setTimeout(() => {
-                    const sparkle = document.createElement('div');
-                    sparkle.className = 'sparkle';
-                    sparkle.style.left = Math.random() * 100 + '%';
-                    sparkle.style.top = Math.random() * 100 + '%';
-                    sparkle.style.animationDelay = Math.random() * 0.5 + 's';
-                    container.appendChild(sparkle);
-                    
-                    setTimeout(() => sparkle.remove(), 3500);
-                }, i * 80 + 300);
+            // 烟花 15个
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => createFirework(), i * 150 + 500);
             }
         }
 
@@ -1347,22 +1370,21 @@
             const container = document.getElementById('effects');
             const x = 10 + Math.random() * 80;
             const y = 15 + Math.random() * 50;
-            const colors = ['#d4af37', '#ff6b9d', '#3498db', '#e74c3c', '#9b59b6'];
+            const colors = ['#d4af37', '#ff6b9d', '#3498db', '#e74c3c', '#9b59b6', '#fff'];
             const color = colors[Math.floor(Math.random() * colors.length)];
             
-            for (let i = 0; i < 30; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'firework-particle';
-                particle.style.left = x + '%';
-                particle.style.top = y + '%';
-                particle.style.background = color;
-                const angle = (i / 30) * Math.PI * 2;
-                const distance = 60 + Math.random() * 100;
-                particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
-                particle.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
-                container.appendChild(particle);
-                
-                setTimeout(() => particle.remove(), 1500);
+            for (let i = 0; i < 40; i++) {
+                const p = document.createElement('div');
+                p.className = 'firework-p';
+                p.style.left = x + '%';
+                p.style.top = y + '%';
+                p.style.background = color;
+                const angle = (i / 40) * Math.PI * 2;
+                const dist = 80 + Math.random() * 120;
+                p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+                p.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+                container.appendChild(p);
+                setTimeout(() => p.remove(), 1500);
             }
         }
     </script>
