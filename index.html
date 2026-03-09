@@ -683,7 +683,7 @@
             color: rgba(255,255,255,0.7);
             margin-bottom: 16px;
             opacity: 0;
-            animation: fadeIn 0.8s ease 0.3s forwards;
+            animation: fadeIn 0.6s ease 0.1s forwards;
         }
         
         .question-name {
@@ -692,7 +692,7 @@
             color: var(--gold);
             margin-bottom: 10px;
             opacity: 0;
-            animation: fadeIn 0.8s ease 0.5s forwards;
+            animation: fadeIn 0.6s ease 0.2s forwards;
         }
         
         .question-text {
@@ -701,7 +701,7 @@
             color: #fff;
             margin-bottom: 60px;
             opacity: 0;
-            animation: fadeIn 0.8s ease 0.7s forwards;
+            animation: fadeIn 0.6s ease 0.3s forwards;
         }
         
         .answer-btns {
@@ -709,7 +709,7 @@
             flex-direction: column;
             gap: 16px;
             opacity: 0;
-            animation: fadeInUp 0.8s ease 1s forwards;
+            animation: fadeInUp 0.6s ease 0.5s forwards;
         }
         
         .btn-yes {
@@ -1294,7 +1294,7 @@
             // 自动播放
             if (idx >= 1 && idx <= 4) {
                 clearTimeout(window.autoTimer);
-                window.autoTimer = setTimeout(() => goToPage(idx + 1), 6000);
+                window.autoTimer = setTimeout(() => goToPage(idx + 1), 5000);
             }
             
             // 庆祝
