@@ -1308,9 +1308,12 @@
         // 点击切换
         document.addEventListener('click', (e) => {
             if (!storyStarted) return;
-            if (currentIdx === 5 || currentIdx === 6 || currentIdx === 7) return;
+            // 如果是按钮点击，不要拦截
             if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
-            if (currentIdx < 5) goToPage(currentIdx + 1);
+            // 只在照片页自动切换
+            if (currentIdx >= 1 && currentIdx <= 3) {
+                goToPage(currentIdx + 1);
+            }
         });
 
         // 滑动切换
@@ -1318,10 +1321,12 @@
         document.addEventListener('touchstart', e => tsY = e.touches[0].clientY, {passive: true});
         
         document.addEventListener('touchend', e => {
-            if (!storyStarted || currentIdx === 5 || currentIdx === 6 || currentIdx === 7) return;
+            if (!storyStarted) return;
+            // 只在照片页支持滑动切换
+            if (currentIdx < 1 || currentIdx > 3) return;
             const diff = tsY - e.changedTouches[0].clientY;
             if (Math.abs(diff) > 60) {
-                if (diff > 0 && currentIdx < 5) goToPage(currentIdx + 1);
+                if (diff > 0 && currentIdx < 3) goToPage(currentIdx + 1);
                 else if (diff < 0 && currentIdx > 1) goToPage(currentIdx - 1);
             }
         }, {passive: true});
