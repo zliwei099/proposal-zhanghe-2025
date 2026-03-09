@@ -210,8 +210,41 @@
         .bottom-progress.visible { opacity: 1; }
         .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); transition: width 0.5s ease; box-shadow: 0 0 10px var(--gold); }
         
-        /* 提示 */
-        .nav-hint { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 2px; z-index: 100; opacity: 0; transition: opacity 0.5s ease; display: flex; align-items: center; gap: 6px; }
+        /* 返回按钮 */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+        }
+        
+        .back-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: rgba(255,255,255,0.5);
+        } position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 2px; z-index: 100; opacity: 0; transition: opacity 0.5s ease; display: flex; align-items: center; gap: 6px; }
         .nav-hint.visible { opacity: 1; }
         
         @media (max-height: 700px) {
@@ -370,6 +403,13 @@
         </div>
     </div>
 
+    <!-- 返回按钮 -->
+    <div class="back-btn" id="backBtn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+    </div>
+
     <!-- 底部进度条 -->
     <div class="bottom-progress" id="bProgress"><div class="progress-fill" id="pFill"></div></div>
 
@@ -485,12 +525,17 @@
             // 更新UI
             const hint = document.getElementById('navHint');
             const bProgress = document.getElementById('bProgress');
+            const backBtn = document.getElementById('backBtn');
             
             if (idx === 0 || idx === 6 || idx === 7) hint.classList.remove('visible');
             else hint.classList.add('visible');
             
             if (idx === 0 || idx === 7) bProgress.classList.remove('visible');
             else bProgress.classList.add('visible');
+            
+            // 返回按钮：封面和庆祝页不显示
+            if (idx === 0 || idx === 7) backBtn.classList.remove('visible');
+            else backBtn.classList.add('visible');
             
             // 清除并设置自动播放
             clearTimeout(autoTimer);
@@ -502,6 +547,13 @@
             if (idx === 7) {
                 setTimeout(startCelebration, 500);
                 if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+            }
+        }
+
+        // 返回上一页
+        function goBack() {
+            if (currentIdx > 0 && currentIdx < 7) {
+                goToPage(currentIdx - 1);
             }
         }
 
